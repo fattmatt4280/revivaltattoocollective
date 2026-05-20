@@ -41,8 +41,10 @@ function SettingsAdmin() {
     }
   }, [data]);
 
-  const saveKey = async (key: string, value: unknown) => {
-    const { error } = await supabase.from("site_settings").upsert({ key, value });
+  const saveKey = async (key: string, value: Meta | Contact) => {
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ key, value: value as never });
     if (error) return toast.error(error.message);
     toast.success(`${key} saved`);
     qc.invalidateQueries({ queryKey: ["site-settings"] });
