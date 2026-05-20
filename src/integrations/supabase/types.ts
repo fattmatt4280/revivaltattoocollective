@@ -14,16 +14,248 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      artists: {
+        Row: {
+          active: boolean
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_order: number
+          id: string
+          instagram_handles: Json
+          name: string
+          slug: string
+          specialty: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          instagram_handles?: Json
+          name: string
+          slug: string
+          specialty: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          instagram_handles?: Json
+          name?: string
+          slug?: string
+          specialty?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          admin_notes: string | null
+          artist_id: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          description: string
+          id: string
+          preferred_date: string | null
+          reference_image_url: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          style: Database["public"]["Enums"]["tattoo_style"] | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          artist_id?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          preferred_date?: string | null
+          reference_image_url?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          style?: Database["public"]["Enums"]["tattoo_style"] | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          artist_id?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          preferred_date?: string | null
+          reference_image_url?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          style?: Database["public"]["Enums"]["tattoo_style"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gallery_images: {
+        Row: {
+          alt_text: string | null
+          artist_id: string | null
+          caption: string | null
+          created_at: string
+          display_order: number
+          id: string
+          public_url: string
+          storage_path: string
+          style: Database["public"]["Enums"]["tattoo_style"]
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          alt_text?: string | null
+          artist_id?: string | null
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          public_url: string
+          storage_path: string
+          style?: Database["public"]["Enums"]["tattoo_style"]
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          alt_text?: string | null
+          artist_id?: string | null
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          public_url?: string
+          storage_path?: string
+          style?: Database["public"]["Enums"]["tattoo_style"]
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_images_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor"
+      booking_status:
+        | "new"
+        | "reviewing"
+        | "confirmed"
+        | "declined"
+        | "completed"
+      tattoo_style:
+        | "color_realism"
+        | "surrealism"
+        | "traditional"
+        | "lettering"
+        | "sign_painting"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +382,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor"],
+      booking_status: [
+        "new",
+        "reviewing",
+        "confirmed",
+        "declined",
+        "completed",
+      ],
+      tattoo_style: [
+        "color_realism",
+        "surrealism",
+        "traditional",
+        "lettering",
+        "sign_painting",
+        "other",
+      ],
+    },
   },
 } as const
