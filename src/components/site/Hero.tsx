@@ -21,8 +21,8 @@ export function Hero() {
       {/* Top label bar */}
       <div className="absolute top-24 left-0 right-0 z-10 px-6 md:px-10">
         <div className="mx-auto max-w-[1600px] flex items-center justify-between text-[10px] tracking-editorial uppercase text-muted-foreground">
-          <span>Est. — A Collective of Three</span>
-          <span className="hidden md:inline">Color Realism · Surrealism · Traditional · Lettering</span>
+          <span>Clearwater, FL — Est. Collective</span>
+          <span className="hidden md:inline">Tattoo · Sign Painting · Lettering · Color Realism</span>
           <span>N° 001</span>
         </div>
       </div>
@@ -48,9 +48,9 @@ export function Hero() {
               className="md:col-span-5 md:col-start-7 text-base md:text-lg text-muted-foreground leading-relaxed max-w-md animate-fade-up"
               style={{ animationDelay: "0.2s" }}
             >
-              A gallery-forward studio where editorial restraint meets the
-              physicality of the needle. Three artists. Three obsessions.
-              One room.
+              Expert tattoo and sign painting in Clearwater, Florida — minutes
+              from Clearwater Beach. A gallery-forward studio where editorial
+              restraint meets the physicality of the needle.
             </p>
           </div>
 

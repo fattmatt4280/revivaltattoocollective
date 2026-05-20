@@ -16,8 +16,9 @@ export function Footer() {
           <div className="md:col-span-3">
             <p className="text-[10px] tracking-editorial uppercase text-primary mb-4">Visit</p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Address coming soon<br />
-              Tue – Sat · 12 – 8 PM
+              1356 Cleveland St<br />
+              Clearwater, FL 33755<br />
+              <a href="tel:+17279538534" className="hover:text-bone transition-colors">(727) 953-8534</a>
             </p>
           </div>
 
