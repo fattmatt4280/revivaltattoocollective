@@ -1,4 +1,6 @@
 import { Instagram } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Artist = {
   slug: string;
@@ -66,6 +68,54 @@ function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   );
 }
 
+function ArtistThumbs({ artistName }: { artistName: string }) {
+  const { data: images } = useQuery({
+    queryKey: ["artist-thumbs", artistName],
+    queryFn: async () => {
+      const { data: artistRow } = await supabase
+        .from("artists")
+        .select("id")
+        .ilike("name", artistName)
+        .maybeSingle();
+      if (!artistRow?.id) return [];
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("id,public_url,alt_text")
+        .eq("artist_id", artistRow.id)
+        .eq("visible", true)
+        .order("display_order", { ascending: true })
+        .limit(4);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const items = images ?? [];
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      {[0, 1, 2, 3].map((i) => {
+        const img = items[i];
+        if (img) {
+          return (
+            <figure
+              key={img.id}
+              className="relative aspect-[3/4] overflow-hidden bg-secondary border border-border/60 group/thumb"
+            >
+              <img
+                src={img.public_url}
+                alt={img.alt_text ?? `${artistName} tattoo work`}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+              />
+            </figure>
+          );
+        }
+        return <ThumbPlaceholder key={i} name={artistName} idx={i + 1} />;
+      })}
+    </div>
+  );
+}
+
 function ArtistCard({ artist }: { artist: Artist }) {
   return (
     <article className="group relative border-t border-border pt-10 pb-12">
@@ -115,11 +165,7 @@ function ArtistCard({ artist }: { artist: Artist }) {
 
         {/* Thumbs */}
         <div className="col-span-12 md:col-span-7">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <ThumbPlaceholder key={i} name={artist.name} idx={i} />
-            ))}
-          </div>
+          <ArtistThumbs artistName={artist.name} />
         </div>
       </div>
     </article>
