@@ -11,13 +11,12 @@ export type Artist = {
 
 export const ARTISTS: Artist[] = [
   {
-    slug: "matt",
-    name: "Matt",
-    specialty: "Color Realism · Surrealism",
+    slug: "brady",
+    name: "Brady Martin",
+    specialty: "Lettering · Sign Painting · Owner",
     bio:
-      "Saturated, dream-state portraits and surreal compositions. Matt builds pieces that read like still frames pulled from a half-remembered film.",
+      "Founder of Revival. Brady is a tattooist and sign painter — script, blackletter, and custom typography on skin. He treats every word as architecture: measured, weighted, and built to live a lifetime.",
     handles: [
-      { handle: "@shyftd.ink", url: "https://instagram.com/shyftd.ink" },
       { handle: "@revivalletters", url: "https://instagram.com/revivalletters" },
     ],
     accentNumber: "01",
@@ -34,13 +33,13 @@ export const ARTISTS: Artist[] = [
     accentNumber: "02",
   },
   {
-    slug: "brady",
-    name: "Brady",
-    specialty: "Lettering",
+    slug: "matt",
+    name: "Matt",
+    specialty: "Color Realism · Surrealism",
     bio:
-      "Script, blackletter, custom typography on skin. Brady treats every word as architecture — measured, weighted, and built to live a lifetime.",
+      "Saturated, dream-state portraits and surreal compositions. Matt builds pieces that read like still frames pulled from a half-remembered film.",
     handles: [
-      { handle: "@revivalletters", url: "https://instagram.com/revivalletters" },
+      { handle: "@shyftd.ink", url: "https://instagram.com/shyftd.ink" },
     ],
     accentNumber: "03",
   },
