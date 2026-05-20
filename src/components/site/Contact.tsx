@@ -49,6 +49,7 @@ export function Contact() {
                 className="w-full h-full grayscale contrast-125 opacity-80 hover:opacity-100 transition-opacity"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
+                sandbox="allow-scripts allow-same-origin allow-popups"
               />
             </div>
             <p className="mt-4 text-[10px] tracking-editorial uppercase text-muted-foreground">
