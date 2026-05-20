@@ -1,9 +1,10 @@
 import { createFileRoute, Outlet, useNavigate, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { claimFirstAdminRole } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Revival Tattoo Collective" }, { name: "robots", content: "noindex,nofollow" }] }),
@@ -36,32 +37,17 @@ function AdminLayout() {
 function ClaimAdmin({ onClaimed }: { onClaimed: () => Promise<void> }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const claimFirstAdmin = useServerFn(claimFirstAdminRole);
 
   const claim = async () => {
     if (!user) return;
-    // Check if any admin exists (RLS lets users see only their own roles,
-    // so this read is restricted; we attempt the insert and rely on the
-    // uniqueness + admin RLS to decide.)
-    const { count } = await supabase
-      .from("user_roles")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "admin");
-
-    if ((count ?? 0) > 0) {
-      toast.error("An admin already exists. Ask them to grant you access.");
-      return;
+    try {
+      await claimFirstAdmin();
+      toast.success("You are now the studio admin.");
+      await onClaimed();
+    } catch (error) {
+      toast.error("Could not claim admin role. " + (error instanceof Error ? error.message : "Please try again."));
     }
-
-    const { error } = await supabase
-      .from("user_roles")
-      .insert({ user_id: user.id, role: "admin" });
-
-    if (error) {
-      toast.error("Could not claim admin role. " + error.message);
-      return;
-    }
-    toast.success("You are now the studio admin.");
-    await onClaimed();
   };
 
   return (
