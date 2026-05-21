@@ -9,15 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MerchRouteImport } from './routes/merch'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ProductHandleRouteImport } from './routes/product.$handle'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminArtistsRouteImport } from './routes/admin.artists'
 
+const MerchRoute = MerchRouteImport.update({
+  id: '/merch',
+  path: '/merch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -37,6 +44,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ProductHandleRoute = ProductHandleRouteImport.update({
+  id: '/product/$handle',
+  path: '/product/$handle',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
@@ -63,19 +75,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/merch': typeof MerchRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/merch': typeof MerchRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -83,10 +99,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
+  '/merch': typeof MerchRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/product/$handle': typeof ProductHandleRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -95,29 +113,35 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/login'
+    | '/merch'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/settings'
+    | '/product/$handle'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
+    | '/merch'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/settings'
+    | '/product/$handle'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/login'
+    | '/merch'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/settings'
+    | '/product/$handle'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -125,10 +149,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   LoginRoute: typeof LoginRoute
+  MerchRoute: typeof MerchRoute
+  ProductHandleRoute: typeof ProductHandleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/merch': {
+      id: '/merch'
+      path: '/merch'
+      fullPath: '/merch'
+      preLoaderRoute: typeof MerchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -156,6 +189,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/product/$handle': {
+      id: '/product/$handle'
+      path: '/product/$handle'
+      fullPath: '/product/$handle'
+      preLoaderRoute: typeof ProductHandleRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
       id: '/admin/settings'
@@ -210,17 +250,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
+  MerchRoute: MerchRoute,
+  ProductHandleRoute: ProductHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
