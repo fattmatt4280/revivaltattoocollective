@@ -1,9 +1,9 @@
 import { MapPin, Phone, Clock, Mail } from "lucide-react";
 
 const info = [
-  { icon: MapPin, label: "Visit", value: "1356 Cleveland St\nClearwater, FL 33755" },
-  { icon: Phone, label: "Call", value: "(727) 953-8534", href: "tel:+17279538534" },
-  { icon: Clock, label: "Hours", value: "Tue – Sat\n12 – 8 PM" },
+  { icon: MapPin, label: "Visit", value: "519 Highland Ave N, Suite A\nLargo, FL 33770" },
+  { icon: Phone, label: "Call", value: "(727) 600-8001", href: "tel:+17276008001" },
+  { icon: Clock, label: "Hours", value: "Tue – Sat\n11 AM – 8 PM" },
   { icon: Mail, label: "Inquire", value: "Use the booking form", href: "#book" },
 ];
 
@@ -45,7 +45,7 @@ export function Contact() {
             <div className="relative aspect-[4/5] md:aspect-[4/5] border border-border overflow-hidden bg-secondary">
               <iframe
                 title="Revival Tattoo Collective — Clearwater, FL"
-                src="https://www.google.com/maps?q=1356+Cleveland+St+Clearwater+FL+33755&output=embed"
+                src="https://www.google.com/maps?q=519+Highland+Ave+N+Suite+A+Largo+FL+33770&output=embed"
                 className="w-full h-full grayscale contrast-125 opacity-80 hover:opacity-100 transition-opacity"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -53,7 +53,7 @@ export function Contact() {
               />
             </div>
             <p className="mt-4 text-[10px] tracking-editorial uppercase text-muted-foreground">
-              1356 Cleveland St · Clearwater, Florida
+              519 Highland Ave N, Suite A · Largo, Florida
             </p>
           </div>
         </div>
