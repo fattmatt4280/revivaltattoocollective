@@ -9,7 +9,7 @@ export function Footer() {
               <span className="italic text-muted-foreground">Collective.</span>
             </p>
             <p className="mt-6 text-sm text-muted-foreground max-w-sm">
-              An editorial tattoo studio. By appointment.
+              A custom tattoo studio. Walk-ins welcome. Appointments recommended.
             </p>
           </div>
 
