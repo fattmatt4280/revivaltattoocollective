@@ -28,7 +28,7 @@ export function Hero() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col justify-center px-6 md:px-10">
+      <div className="relative z-10 min-h-screen flex flex-col justify-center pt-40 md:pt-32 px-6 md:px-10">
         <div className="mx-auto max-w-[1600px] w-full">
           <p className="text-[11px] tracking-editorial uppercase text-primary mb-8 animate-fade-in">
             Revival Tattoo Collective
