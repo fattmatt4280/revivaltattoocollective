@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { CartDrawer } from "@/components/site/CartDrawer";
 
 const links = [
   { to: "/", label: "Index" },
@@ -29,14 +30,20 @@ export function Nav() {
               {l.label}
             </a>
           ))}
+          <Link to="/merch" className="hover:text-bone transition-colors">
+            Merch
+          </Link>
         </nav>
 
-        <a
-          href="#book"
-          className="text-[11px] tracking-editorial uppercase px-5 py-2.5 border border-bone/80 text-bone hover:bg-bone hover:text-ink transition-colors"
-        >
-          Book Now
-        </a>
+        <div className="flex items-center gap-4">
+          <CartDrawer />
+          <a
+            href="/#book"
+            className="text-[11px] tracking-editorial uppercase px-5 py-2.5 border border-bone/80 text-bone hover:bg-bone hover:text-ink transition-colors"
+          >
+            Book Now
+          </a>
+        </div>
       </div>
     </header>
   );
