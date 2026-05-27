@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,29 +10,30 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingBag, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingBag, Minus, Plus, Trash2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { getProduct, formatPrice } from "@/lib/products";
 
 export function CartDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } =
-    useCartStore();
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + parseFloat(item.price.amount) * item.quantity,
+  const navigate = useNavigate();
+  const items = useCartStore((s) => s.items);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeItem = useCartStore((s) => s.removeItem);
+
+  const lineItems = items
+    .map((item) => ({ item, product: getProduct(item.productId) }))
+    .filter((x): x is { item: typeof items[number]; product: NonNullable<ReturnType<typeof getProduct>> } => !!x.product);
+
+  const totalItems = lineItems.reduce((sum, { item }) => sum + item.quantity, 0);
+  const subtotalCents = lineItems.reduce(
+    (sum, { item, product }) => sum + product.priceCents * item.quantity,
     0,
   );
 
-  useEffect(() => {
-    if (isOpen) syncCart();
-  }, [isOpen, syncCart]);
-
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, "_blank");
-      setIsOpen(false);
-    }
+    setIsOpen(false);
+    navigate({ to: "/checkout" });
   };
 
   return (
@@ -59,7 +61,7 @@ export function CartDrawer() {
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col flex-1 pt-6 min-h-0">
-          {items.length === 0 ? (
+          {lineItems.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <ShoppingBag className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
@@ -70,28 +72,22 @@ export function CartDrawer() {
             <>
               <div className="flex-1 overflow-y-auto pr-2 min-h-0">
                 <div className="space-y-4">
-                  {items.map((item) => (
-                    <div key={item.variantId} className="flex gap-4 p-2">
+                  {lineItems.map(({ item, product }) => (
+                    <div key={item.productId} className="flex gap-4 p-2">
                       <div className="w-16 h-16 bg-secondary/20 rounded-md overflow-hidden flex-shrink-0">
-                        {item.product.node.images?.edges?.[0]?.node ? (
-                          <img
-                            src={item.product.node.images.edges[0].node.url}
-                            alt={item.product.node.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : null}
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          width={1024}
+                          height={1024}
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate text-bone">
-                          {item.product.node.title}
-                        </h4>
-                        {item.variantTitle !== "Default Title" && (
-                          <p className="text-xs text-muted-foreground">
-                            {item.selectedOptions.map((o) => o.value).join(" • ")}
-                          </p>
-                        )}
+                        <h4 className="font-medium truncate text-bone">{product.name}</h4>
                         <p className="font-semibold text-bone mt-1">
-                          ${parseFloat(item.price.amount).toFixed(2)}
+                          {formatPrice(product.priceCents)}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
@@ -99,7 +95,8 @@ export function CartDrawer() {
                           variant="ghost"
                           size="icon"
                           className="h-6 w-6 text-muted-foreground hover:text-bone"
-                          onClick={() => removeItem(item.variantId)}
+                          onClick={() => removeItem(item.productId)}
+                          aria-label="Remove"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -108,7 +105,8 @@ export function CartDrawer() {
                             variant="outline"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                            aria-label="Decrease"
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -117,7 +115,8 @@ export function CartDrawer() {
                             variant="outline"
                             size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            aria-label="Increase"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -133,23 +132,20 @@ export function CartDrawer() {
                     Subtotal
                   </span>
                   <span className="text-xl font-display text-bone">
-                    ${totalPrice.toFixed(2)}
+                    {formatPrice(subtotalCents)}
                   </span>
                 </div>
+                <p className="text-[10px] tracking-editorial uppercase text-muted-foreground">
+                  Shipping & tax calculated at checkout
+                </p>
                 <Button
                   onClick={handleCheckout}
                   className="w-full"
                   size="lg"
-                  disabled={items.length === 0 || isLoading || isSyncing}
+                  disabled={lineItems.length === 0}
                 >
-                  {isLoading || isSyncing ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Checkout
-                    </>
-                  )}
+                  Checkout
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </>
