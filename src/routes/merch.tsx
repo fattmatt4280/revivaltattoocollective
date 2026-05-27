@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { ProductCard } from "@/components/site/ProductCard";
-import { fetchProducts } from "@/lib/shopify";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { PRODUCTS } from "@/lib/products";
 
 export const Route = createFileRoute("/merch")({
   head: () => ({
@@ -13,12 +12,12 @@ export const Route = createFileRoute("/merch")({
       {
         name: "description",
         content:
-          "Stickers, prints, and limited merch from Revival Tattoo Collective in Largo, FL.",
+          "Signed prints and limited drops from Revival Tattoo Collective in Largo, FL.",
       },
       { property: "og:title", content: "Merch — Revival Tattoo Collective" },
       {
         property: "og:description",
-        content: "Stickers, prints, and limited merch from Revival Tattoo Collective.",
+        content: "Signed prints and limited drops from Revival Tattoo Collective.",
       },
     ],
   }),
@@ -26,13 +25,9 @@ export const Route = createFileRoute("/merch")({
 });
 
 function MerchPage() {
-  const { data: products, isLoading } = useQuery({
-    queryKey: ["shopify", "products"],
-    queryFn: () => fetchProducts(50),
-  });
-
   return (
     <div className="min-h-screen bg-ink text-bone">
+      <PaymentTestModeBanner />
       <Nav />
       <main className="pt-32 pb-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
@@ -43,26 +38,16 @@ function MerchPage() {
               <span className="italic text-muted-foreground">Prints.</span>
             </h1>
             <p className="mt-6 text-muted-foreground max-w-md">
-              Stickers, signed prints, and limited drops from the collective. Shipped from the
-              studio in Largo, FL.
+              Signed prints and limited drops from the collective. Shipped from the studio in
+              Largo, FL.
             </p>
           </header>
 
-          {isLoading ? (
-            <div className="flex items-center justify-center py-32">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : !products || products.length === 0 ? (
-            <div className="border border-border/40 py-32 text-center">
-              <p className="text-muted-foreground">No products found.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-              {products.map((product) => (
-                <ProductCard key={product.node.id} product={product} />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+            {PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         </div>
       </main>
       <Footer />

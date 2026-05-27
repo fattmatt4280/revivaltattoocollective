@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Image, CalendarDays, Settings, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Image, CalendarDays, Settings, LogOut, Menu, X, Package } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, type ReactNode } from "react";
@@ -9,6 +9,7 @@ const nav = [
   { to: "/admin/artists", label: "Artists", icon: Users },
   { to: "/admin/gallery", label: "Gallery", icon: Image },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarDays },
+  { to: "/admin/orders", label: "Orders", icon: Package },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
