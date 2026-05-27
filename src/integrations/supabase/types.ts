@@ -162,6 +162,66 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          id: string
+          items: Json
+          shipping_address: Json | null
+          shipping_cents: number
+          status: Database["public"]["Enums"]["order_status"]
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string
+          subtotal_cents: number
+          tax_cents: number
+          total_cents: number
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          currency?: string
+          customer_email: string
+          customer_name?: string | null
+          id?: string
+          items?: Json
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string
+          customer_name?: string | null
+          id?: string
+          items?: Json
+          shipping_address?: Json | null
+          shipping_cents?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string
+          subtotal_cents?: number
+          tax_cents?: number
+          total_cents?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -249,6 +309,13 @@ export type Database = {
         | "confirmed"
         | "declined"
         | "completed"
+      order_status:
+        | "paid"
+        | "packed"
+        | "shipped"
+        | "delivered"
+        | "refunded"
+        | "cancelled"
       tattoo_style:
         | "color_realism"
         | "surrealism"
@@ -390,6 +457,14 @@ export const Constants = {
         "confirmed",
         "declined",
         "completed",
+      ],
+      order_status: [
+        "paid",
+        "packed",
+        "shipped",
+        "delivered",
+        "refunded",
+        "cancelled",
       ],
       tattoo_style: [
         "color_realism",
