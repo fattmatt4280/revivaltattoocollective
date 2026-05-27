@@ -55,8 +55,9 @@ function AdminOrders() {
     },
   });
 
+  type OrderStatus = (typeof STATUS_OPTIONS)[number];
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+    mutationFn: async ({ id, status }: { id: string; status: OrderStatus }) => {
       const { error } = await supabase.from("orders").update({ status }).eq("id", id);
       if (error) throw error;
     },
@@ -199,7 +200,9 @@ function AdminOrders() {
                         </label>
                         <Select
                           value={order.status}
-                          onValueChange={(v) => updateStatus.mutate({ id: order.id, status: v })}
+                          onValueChange={(v) =>
+                            updateStatus.mutate({ id: order.id, status: v as OrderStatus })
+                          }
                         >
                           <SelectTrigger className="w-full rounded-none">
                             <SelectValue />

@@ -72,7 +72,7 @@ async function handleCheckoutCompleted(event: Stripe.Event, env: StripeEnv) {
       };
     }) ?? [];
 
-  const shipping = full.collected_information?.shipping_details ?? full.shipping_details;
+  const shipping = full.collected_information?.shipping_details ?? null;
 
   const orderRow = {
     stripe_session_id: full.id,
