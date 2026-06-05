@@ -52,6 +52,12 @@ async function handleCheckoutCompleted(event: Stripe.Event, env: StripeEnv) {
 
   const stripe = createStripeClient(env);
 
+  // Branch: booking deposit vs merch order, based on session metadata.
+  if (session.metadata?.kind === "booking_deposit") {
+    await handleBookingDeposit(session);
+    return;
+  }
+
   // Retrieve full session with line items + shipping
   const full = await stripe.checkout.sessions.retrieve(session.id, {
     expand: ["line_items.data.price.product", "shipping_cost.shipping_rate", "total_details.breakdown"],
@@ -110,4 +116,50 @@ async function handleCheckoutCompleted(event: Stripe.Event, env: StripeEnv) {
   }
 
   console.log(`Order recorded: ${full.id} (${orderRow.customer_email}, ${items.length} items, $${(orderRow.total_cents / 100).toFixed(2)})`);
+}
+
+async function handleBookingDeposit(session: Stripe.Checkout.Session) {
+  const m = session.metadata ?? {};
+  const tier = m.deposit_tier === "full_day" ? "full_day" : "half_day";
+  const depositAmountCents = tier === "full_day" ? 20000 : 10000;
+
+  // Reconstruct description from chunked metadata.
+  const chunkCount = parseInt(m.description_chunks ?? "0", 10);
+  let description = "";
+  for (let i = 0; i < chunkCount; i++) description += m[`description_${i}`] ?? "";
+  if (!description) description = "(no description provided)";
+
+  const allowedStyles = ["color_realism", "surrealism", "traditional", "lettering", "sign_painting", "other"];
+  const style = m.style && allowedStyles.includes(m.style) ? m.style : null;
+
+  const row = {
+    artist_id: m.artist_id || null,
+    style,
+    description,
+    preferred_date: m.preferred_date || null,
+    contact_name: m.contact_name || "Unknown",
+    contact_email: m.contact_email || session.customer_details?.email || "unknown@unknown",
+    contact_phone: m.contact_phone || null,
+    reference_image_url: m.reference_image_url || null,
+    status: "new" as const,
+    deposit_tier: tier,
+    deposit_amount_cents: depositAmountCents,
+    stripe_session_id: session.id,
+    stripe_payment_intent_id:
+      typeof session.payment_intent === "string"
+        ? session.payment_intent
+        : session.payment_intent?.id ?? null,
+    deposit_paid_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabaseAdmin
+    .from("bookings")
+    .upsert(row, { onConflict: "stripe_session_id" });
+
+  if (error) {
+    console.error("Failed to insert booking:", error);
+    throw error;
+  }
+
+  console.log(`Booking deposit recorded: ${session.id} (${row.contact_email}, ${tier}, $${(depositAmountCents / 100).toFixed(2)})`);
 }
