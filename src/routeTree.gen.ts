@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as BookCheckoutRouteImport } from './routes/book.checkout'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
@@ -57,6 +58,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/return',
   path: '/return',
   getParentRoute: () => CheckoutRoute,
+} as any)
+const BookCheckoutRoute = BookCheckoutRouteImport.update({
+  id: '/book/checkout',
+  path: '/book/checkout',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/book/checkout': typeof BookCheckoutRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/book/checkout': typeof BookCheckoutRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/book/checkout': typeof BookCheckoutRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/book/checkout'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/book/checkout'
     | '/checkout/return'
     | '/admin'
     | '/api/public/payments/webhook'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/book/checkout'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   MerchRoute: typeof MerchRoute
+  BookCheckoutRoute: typeof BookCheckoutRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/checkout/return'
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof CheckoutRoute
+    }
+    '/book/checkout': {
+      id: '/book/checkout'
+      path: '/book/checkout'
+      fullPath: '/book/checkout'
+      preLoaderRoute: typeof BookCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
       id: '/admin/settings'
@@ -325,8 +345,19 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRouteWithChildren,
   LoginRoute: LoginRoute,
   MerchRoute: MerchRoute,
+  BookCheckoutRoute: BookCheckoutRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
