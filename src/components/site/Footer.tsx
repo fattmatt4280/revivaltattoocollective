@@ -28,6 +28,8 @@ export function Footer() {
               <li><a href="https://instagram.com/shyftd.ink" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@shyftd.ink</a></li>
               <li><a href="https://instagram.com/inkbyashlyn" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@inkbyashlyn</a></li>
               <li><a href="https://instagram.com/revivalletters" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@revivalletters</a></li>
+              <li><a href="https://facebook.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">Facebook</a></li>
+              <li><a href="https://tiktok.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">TikTok</a></li>
             </ul>
           </div>
 
