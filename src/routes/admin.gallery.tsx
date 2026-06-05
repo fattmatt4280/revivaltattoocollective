@@ -70,6 +70,29 @@ function GalleryAdmin() {
   const onUpload = async (files: FileList) => {
     setUploading(true);
     try {
+      // Verify a live admin session BEFORE touching storage so we surface
+      // a clear "sign in again" message instead of a raw RLS denial.
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        toast.error("Your session expired. Please sign in again.");
+        return;
+      }
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
+      if (userErr || !userData.user) {
+        toast.error("Your session expired. Please sign in again.");
+        return;
+      }
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userData.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!roleRow) {
+        toast.error("You no longer have admin access. Please sign in again.");
+        return;
+      }
+
       for (const file of Array.from(files)) {
         const ext = file.name.split(".").pop() || "jpg";
         const path = `gallery/${crypto.randomUUID()}.${ext}`;
@@ -77,7 +100,7 @@ function GalleryAdmin() {
           cacheControl: "3600",
           contentType: file.type,
         });
-        if (upErr) throw upErr;
+        if (upErr) throw new Error(`Storage upload failed: ${upErr.message}`);
         const { data: { publicUrl } } = supabase.storage.from("revival").getPublicUrl(path);
         const { error: insErr } = await supabase.from("gallery_images").insert({
           storage_path: path,
@@ -88,7 +111,11 @@ function GalleryAdmin() {
           display_order: (images?.length ?? 0) + 1,
           artist_id: filterArtist !== "all" ? filterArtist : null,
         });
-        if (insErr) throw insErr;
+        if (insErr) {
+          // Clean up the orphaned storage object so the bucket stays tidy.
+          await supabase.storage.from("revival").remove([path]);
+          throw new Error(`Saving image record failed: ${insErr.message}`);
+        }
       }
       toast.success(`${files.length} image${files.length > 1 ? "s" : ""} uploaded`);
       refresh();

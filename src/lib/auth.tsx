@@ -38,12 +38,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
+      if (event === "SIGNED_OUT" || !newSession?.user) {
+        setIsAdmin(false);
+        return;
+      }
       // Defer role fetch to avoid deadlocks
       setTimeout(() => {
-        void fetchRole(newSession?.user?.id);
+        void fetchRole(newSession.user.id);
       }, 0);
     });
 
