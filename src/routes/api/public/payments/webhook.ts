@@ -129,8 +129,10 @@ async function handleBookingDeposit(session: Stripe.Checkout.Session) {
   for (let i = 0; i < chunkCount; i++) description += m[`description_${i}`] ?? "";
   if (!description) description = "(no description provided)";
 
-  const allowedStyles = ["color_realism", "surrealism", "traditional", "lettering", "sign_painting", "other"];
-  const style = m.style && allowedStyles.includes(m.style) ? m.style : null;
+  const allowedStyles = ["color_realism", "surrealism", "traditional", "lettering", "sign_painting", "other"] as const;
+  type TattooStyle = typeof allowedStyles[number];
+  const style: TattooStyle | null =
+    m.style && (allowedStyles as readonly string[]).includes(m.style) ? (m.style as TattooStyle) : null;
 
   const row = {
     artist_id: m.artist_id || null,
