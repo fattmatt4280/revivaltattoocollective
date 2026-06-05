@@ -8,13 +8,16 @@ interface CartLine {
 }
 
 interface Props {
-  items: CartLine[];
+  items?: CartLine[];
   customerEmail?: string;
   returnUrl?: string;
+  /** Optional custom fetcher — overrides the default cart-based fetcher. */
+  fetchClientSecret?: () => Promise<string>;
 }
 
-export function StripeEmbeddedCheckout({ items, customerEmail, returnUrl }: Props) {
-  const fetchClientSecret = async (): Promise<string> => {
+export function StripeEmbeddedCheckout({ items, customerEmail, returnUrl, fetchClientSecret }: Props) {
+  const defaultFetcher = async (): Promise<string> => {
+    if (!items) throw new Error("No items provided");
     const result = await createCheckoutSession({
       data: {
         items,
@@ -32,7 +35,7 @@ export function StripeEmbeddedCheckout({ items, customerEmail, returnUrl }: Prop
 
   return (
     <div id="checkout">
-      <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret }}>
+      <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret: fetchClientSecret ?? defaultFetcher }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>

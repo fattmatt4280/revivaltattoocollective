@@ -22,6 +22,10 @@ type Booking = {
   reference_image_url: string | null;
   status: Status;
   created_at: string;
+  deposit_tier: string | null;
+  deposit_amount_cents: number | null;
+  stripe_payment_intent_id: string | null;
+  deposit_paid_at: string | null;
 };
 
 export const Route = createFileRoute("/admin/bookings")({
@@ -101,6 +105,29 @@ function BookingsAdmin() {
                 {b.reference_image_url ? (
                   <a href={b.reference_image_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
                     View
+                  </a>
+                ) : "—"}
+              </Meta>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4 border-t border-border/40 pt-4">
+              <Meta label="Sitting">
+                {b.deposit_tier === "full_day" ? "Half to full day" : b.deposit_tier === "half_day" ? "Half day or less" : "—"}
+              </Meta>
+              <Meta label="Deposit paid">
+                {b.deposit_amount_cents != null
+                  ? `$${(b.deposit_amount_cents / 100).toFixed(2)}${b.deposit_paid_at ? ` · ${new Date(b.deposit_paid_at).toLocaleDateString()}` : ""}`
+                  : "—"}
+              </Meta>
+              <Meta label="Payment">
+                {b.stripe_payment_intent_id ? (
+                  <a
+                    href={`https://dashboard.stripe.com/payments/${b.stripe_payment_intent_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    View / refund in Stripe →
                   </a>
                 ) : "—"}
               </Meta>

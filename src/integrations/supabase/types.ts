@@ -64,11 +64,16 @@ export type Database = {
           contact_name: string
           contact_phone: string | null
           created_at: string
+          deposit_amount_cents: number | null
+          deposit_paid_at: string | null
+          deposit_tier: string | null
           description: string
           id: string
           preferred_date: string | null
           reference_image_url: string | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           style: Database["public"]["Enums"]["tattoo_style"] | null
           updated_at: string
         }
@@ -79,11 +84,16 @@ export type Database = {
           contact_name: string
           contact_phone?: string | null
           created_at?: string
+          deposit_amount_cents?: number | null
+          deposit_paid_at?: string | null
+          deposit_tier?: string | null
           description: string
           id?: string
           preferred_date?: string | null
           reference_image_url?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           style?: Database["public"]["Enums"]["tattoo_style"] | null
           updated_at?: string
         }
@@ -94,11 +104,16 @@ export type Database = {
           contact_name?: string
           contact_phone?: string | null
           created_at?: string
+          deposit_amount_cents?: number | null
+          deposit_paid_at?: string | null
+          deposit_tier?: string | null
           description?: string
           id?: string
           preferred_date?: string | null
           reference_image_url?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           style?: Database["public"]["Enums"]["tattoo_style"] | null
           updated_at?: string
         }
