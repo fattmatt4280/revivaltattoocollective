@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as BookReturnRouteImport } from './routes/book.return'
 import { Route as BookCheckoutRouteImport } from './routes/book.checkout'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -58,6 +59,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/return',
   path: '/return',
   getParentRoute: () => CheckoutRoute,
+} as any)
+const BookReturnRoute = BookReturnRouteImport.update({
+  id: '/book/return',
+  path: '/book/return',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BookCheckoutRoute = BookCheckoutRouteImport.update({
   id: '/book/checkout',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/book/checkout': typeof BookCheckoutRoute
+  '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/book/checkout': typeof BookCheckoutRoute
+  '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/book/checkout': typeof BookCheckoutRoute
+  '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/book/checkout'
+    | '/book/return'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/book/checkout'
+    | '/book/return'
     | '/checkout/return'
     | '/admin'
     | '/api/public/payments/webhook'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/settings'
     | '/book/checkout'
+    | '/book/return'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MerchRoute: typeof MerchRoute
   BookCheckoutRoute: typeof BookCheckoutRoute
+  BookReturnRoute: typeof BookReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/checkout/return'
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof CheckoutRoute
+    }
+    '/book/return': {
+      id: '/book/return'
+      path: '/book/return'
+      fullPath: '/book/return'
+      preLoaderRoute: typeof BookReturnRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/book/checkout': {
       id: '/book/checkout'
@@ -346,6 +366,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MerchRoute: MerchRoute,
   BookCheckoutRoute: BookCheckoutRoute,
+  BookReturnRoute: BookReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
