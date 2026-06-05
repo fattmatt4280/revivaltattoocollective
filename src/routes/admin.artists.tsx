@@ -17,7 +17,7 @@ type Artist = {
   name: string;
   specialty: string;
   bio: string | null;
-  instagram_handles: { handle: string; url: string }[];
+  instagram_handles: { handle: string; url: string; platform?: "instagram" | "facebook" | "tiktok" }[];
   display_order: number;
   active: boolean;
 };
@@ -140,11 +140,18 @@ function ArtistEditor({
   };
 
   const addHandle = () =>
-    update("instagram_handles", [...(draft.instagram_handles ?? []), { handle: "@", url: "https://instagram.com/" }]);
+    update("instagram_handles", [
+      ...(draft.instagram_handles ?? []),
+      { platform: "instagram", handle: "@", url: "https://instagram.com/" },
+    ]);
 
-  const updateHandle = (i: number, key: "handle" | "url", v: string) => {
+  const updateHandle = (
+    i: number,
+    key: "handle" | "url" | "platform",
+    v: string,
+  ) => {
     const next = [...(draft.instagram_handles ?? [])];
-    next[i] = { ...next[i], [key]: v };
+    next[i] = { ...next[i], [key]: v } as Artist["instagram_handles"][number];
     update("instagram_handles", next);
   };
 
@@ -206,7 +213,7 @@ function ArtistEditor({
         </div>
         <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-[10px] tracking-editorial uppercase text-muted-foreground">Instagram Handles</Label>
+            <Label className="text-[10px] tracking-editorial uppercase text-muted-foreground">Social Handles</Label>
             <Button size="sm" variant="outline" onClick={addHandle} className="rounded-none text-[10px] tracking-editorial uppercase">
               <Plus className="w-3 h-3 mr-1" /> Add handle
             </Button>
@@ -214,17 +221,26 @@ function ArtistEditor({
           <div className="space-y-2">
             {(draft.instagram_handles ?? []).map((h, i) => (
               <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                <select
+                  value={h.platform ?? "instagram"}
+                  onChange={(e) => updateHandle(i, "platform", e.target.value)}
+                  className="col-span-2 h-10 rounded-none bg-ink border border-border text-bone text-xs px-2 tracking-editorial uppercase"
+                >
+                  <option value="instagram">Instagram</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="tiktok">TikTok</option>
+                </select>
                 <Input
                   value={h.handle}
                   onChange={(e) => updateHandle(i, "handle", e.target.value)}
                   placeholder="@handle"
-                  className="col-span-4 rounded-none bg-ink border-border"
+                  className="col-span-3 rounded-none bg-ink border-border"
                 />
                 <Input
                   value={h.url}
                   onChange={(e) => updateHandle(i, "url", e.target.value)}
-                  placeholder="https://instagram.com/..."
-                  className="col-span-7 rounded-none bg-ink border-border"
+                  placeholder="https://..."
+                  className="col-span-6 rounded-none bg-ink border-border"
                 />
                 <Button size="icon" variant="outline" onClick={() => removeHandle(i)} className="rounded-none">
                   <Trash2 className="w-4 h-4" />
