@@ -220,11 +220,11 @@ function ArtistEditor({
           </div>
           <div className="space-y-2">
             {(draft.instagram_handles ?? []).map((h, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-center">
+              <div key={i} className="flex flex-wrap md:flex-nowrap items-center gap-2 w-full">
                 <select
                   value={h.platform ?? "instagram"}
                   onChange={(e) => updateHandle(i, "platform", e.target.value)}
-                  className="col-span-2 h-10 rounded-none bg-ink border border-border text-bone text-xs px-2 tracking-editorial uppercase"
+                  className="h-10 w-32 shrink-0 rounded-none bg-ink border border-border text-bone text-xs px-2 tracking-editorial uppercase"
                 >
                   <option value="instagram">Instagram</option>
                   <option value="facebook">Facebook</option>
@@ -234,15 +234,15 @@ function ArtistEditor({
                   value={h.handle}
                   onChange={(e) => updateHandle(i, "handle", e.target.value)}
                   placeholder="@handle"
-                  className="col-span-3 rounded-none bg-ink border-border"
+                  className="flex-1 min-w-0 basis-40 rounded-none bg-ink border-border"
                 />
                 <Input
                   value={h.url}
                   onChange={(e) => updateHandle(i, "url", e.target.value)}
                   placeholder="https://..."
-                  className="col-span-6 rounded-none bg-ink border-border"
+                  className="flex-[2] min-w-0 basis-64 rounded-none bg-ink border-border"
                 />
-                <Button size="icon" variant="outline" onClick={() => removeHandle(i)} className="rounded-none">
+                <Button size="icon" variant="outline" onClick={() => removeHandle(i)} className="rounded-none shrink-0">
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
