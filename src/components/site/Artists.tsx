@@ -1,4 +1,5 @@
-import { Instagram } from "lucide-react";
+import { Instagram, Facebook } from "lucide-react";
+import { TikTokIcon } from "@/components/icons/TikTokIcon";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -7,7 +8,7 @@ export type Artist = {
   name: string;
   specialty: string;
   bio: string;
-  handles: { handle: string; url: string }[];
+  handles: { handle: string; url: string; platform?: "instagram" | "facebook" | "tiktok" }[];
   accentNumber: string;
 };
 
@@ -148,7 +149,13 @@ function ArtistCard({ artist }: { artist: Artist }) {
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
               >
-                <Instagram className="w-3.5 h-3.5" />
+                {h.platform === "facebook" ? (
+                  <Facebook className="w-3.5 h-3.5" />
+                ) : h.platform === "tiktok" ? (
+                  <TikTokIcon size={14} />
+                ) : (
+                  <Instagram className="w-3.5 h-3.5" />
+                )}
                 {h.handle}
               </a>
             ))}
