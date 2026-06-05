@@ -1,29 +1,91 @@
-## Switch from Shopify to Paddle
+## Goal
 
-Paddle is one of Lovable's built-in payment providers, so no API keys or credentials are needed from you — a test environment is provisioned automatically and you can run fake-card checkouts immediately. Going live later just requires Paddle's verification step.
+Add a public booking form that collects a non-refundable deposit via the same Stripe checkout used for merch. Booking is only saved after the deposit clears.
 
-### Steps
+## Deposit tiers (new Stripe products)
 
-1. **Eligibility check** — run `recommend_payment_provider` to confirm Paddle accepts this product type (signed art prints, stickers — physical goods sold by the studio). If Paddle rejects physical goods for this catalog, I'll flag it and we'll fall back to Stripe (also built-in, no keys needed).
-2. **Enable Paddle** via `enable_paddle_payments`. You'll fill out a short form (email, business name). Test environment is live immediately after.
-3. **Create products in Paddle** via `batch_create_product` — start with the two items already drafted earlier:
-   - Signed Art Print 11x14 — $45
-   - Large Format Print 18x24 — $85
-   You can add more anytime.
-4. **Rip out Shopify code**:
-   - Delete `src/lib/shopify.ts`, `src/hooks/useCartSync.ts`, `src/stores/cartStore.ts`
-   - Delete `src/routes/product.$handle.tsx` (Paddle uses hosted checkout, no per-product page needed unless you want one)
-   - Remove the `useCartSync` call from `src/routes/__root.tsx`
-5. **Rebuild merch with Paddle**:
-   - `src/lib/products.ts` — server function that lists products from Paddle
-   - `src/stores/cartStore.ts` — simple local zustand cart (no remote cart needed; Paddle takes the cart into a checkout session)
-   - `src/components/site/CartDrawer.tsx` — updated to open Paddle Checkout (overlay or hosted page) with the line items
-   - `src/components/site/ProductCard.tsx` — updated to use the new product shape
-   - `src/routes/merch.tsx` — fetches from the new server function
-6. **Verify** the checkout flow end-to-end with Paddle's test card.
+Create via `payments--batch_create_product` (tax code `txcd_99999999` — services):
 
-### Notes
+- `booking_deposit_half_day` — "Tattoo Deposit — Half Day or Less" — **$100** — `deposit_half_day`
+- `booking_deposit_full_day` — "Tattoo Deposit — Half to Full Day" — **$200** — `deposit_full_day`
 
-- Visual design stays exactly as-is (dark editorial merch grid you already have).
-- No Square credentials needed now or later unless you change your mind.
-- When you're ready to take real payments, Paddle walks you through verification — no code changes.
+Quantity locked to 1.
+
+## Frontend
+
+**New: `src/components/site/BookingForm.tsx`** — rendered on the home page (`#book` anchor) above `<Contact />`.
+
+Fields:
+- Artist (select from active `artists`)
+- Style (enum, optional)
+- **Sitting length** — radio:
+  - Half day or less (≤4 hrs) — **$100 deposit**
+  - Half to full day (4–8 hrs) — **$200 deposit**
+- Description (textarea)
+- Preferred date (optional)
+- Reference image (optional upload → `revival` bucket)
+- Name, email, phone
+
+Submit button: "Continue to deposit — $100/$200". Validates client-side, stores form draft in `sessionStorage`, then navigates to `/book/checkout`.
+
+**New: `src/routes/book.checkout.tsx`** — reads draft from `sessionStorage`, renders order summary + `<StripeEmbeddedCheckout>` (existing component, extended to accept a single price + booking metadata). Test-mode banner included.
+
+**New: `src/routes/book.return.tsx`** — confirmation page after Stripe return; shows "Booking received — we'll be in touch" and clears the draft.
+
+**Update: `src/components/site/Contact.tsx`** — `#book` anchor already exists; no change needed beyond ensuring `BookingForm` has `id="book"`.
+
+## Backend
+
+**Extend `src/lib/payments.functions.ts`**
+
+Add `createBookingDepositCheckout` server fn:
+- Input: `{ depositTier: "half_day" | "full_day", bookingDraft: {...validated fields...}, returnUrl, environment }`
+- Maps tier → `deposit_half_day` / `deposit_full_day` lookup key
+- Creates Stripe Checkout Session (`mode: payment`, `ui_mode: embedded_page`)
+- Passes `automatic_tax: { enabled: true }` (matches merch setup)
+- Stashes the full booking draft on `session.metadata` (JSON-stringified, ≤500 chars per Stripe key — split if needed) **and** on `payment_intent_data.metadata` for redundancy
+- Sets `payment_intent_data.description` to `"Tattoo deposit — <tier label>"`
+- Collects `customer_email` from form
+- Returns `clientSecret`
+
+**Extend webhook `src/routes/api/public/payments/webhook.ts`**
+
+In `handleCheckoutCompleted`, branch on the line item's lookup key:
+- `print_*` (existing) → insert into `orders` as today
+- `deposit_*` → parse booking draft from metadata, insert into `bookings` table via `supabaseAdmin` with `status: 'new'`, plus new columns:
+
+## Schema migration
+
+Add to `bookings`:
+- `deposit_tier` text (`'half_day' | 'full_day'`, nullable so existing rows still validate)
+- `deposit_amount_cents` integer
+- `stripe_session_id` text unique (idempotency key for webhook upsert)
+- `stripe_payment_intent_id` text
+- `deposit_paid_at` timestamptz
+
+Tighten RLS: **drop** the existing `"Public can submit valid bookings"` INSERT policy — bookings now only enter via the webhook (service role, bypasses RLS). Admin SELECT/UPDATE/DELETE policies remain.
+
+## Admin updates
+
+`src/routes/admin.bookings.tsx`: show deposit tier, deposit amount, and a "Refund deposit" link that opens the Stripe payment in the dashboard (manual refund, per the chosen policy). No auto-refund logic.
+
+## Files touched
+
+```
+created  src/components/site/BookingForm.tsx
+created  src/routes/book.checkout.tsx
+created  src/routes/book.return.tsx
+created  supabase/migrations/<ts>_bookings_deposits.sql
+edited   src/routes/index.tsx              (mount <BookingForm />)
+edited   src/lib/payments.functions.ts     (+createBookingDepositCheckout)
+edited   src/components/StripeEmbeddedCheckout.tsx  (accept generic checkout fetcher OR a 2nd variant)
+edited   src/routes/api/public/payments/webhook.ts  (branch on lookup key → orders|bookings)
+edited   src/routes/admin.bookings.tsx     (deposit columns + refund link)
+```
+
+## Notes / non-goals
+
+- **Manual refunds only** — declining a booking in admin does not refund automatically; refunds happen in the Stripe dashboard.
+- Deposits are charged at submission; an unpaid abandonment never creates a `bookings` row.
+- No subscription/recurring logic — one-time payment only.
+- Stripe Tax is left on for consistency with merch; services tax code `txcd_99999999` keeps it conservative for FL.
