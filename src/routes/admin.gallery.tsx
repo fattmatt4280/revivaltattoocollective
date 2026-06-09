@@ -36,6 +36,7 @@ type GalleryImage = {
 };
 
 export const Route = createFileRoute("/admin/gallery")({
+  head: () => ({ meta: [{ title: "Gallery — Revival Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: GalleryAdmin,
 });
 

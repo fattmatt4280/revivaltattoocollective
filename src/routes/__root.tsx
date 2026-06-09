@@ -82,6 +82,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Revival Tattoo Collective" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Revival Tattoo Collective",
+          url: "https://revivaltattoocollective.com",
+          telephone: "+1-727-600-8001",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "519 Highland Ave N, Suite A",
+            addressLocality: "Largo",
+            addressRegion: "FL",
+            postalCode: "33770",
+            addressCountry: "US",
+          },
+        }),
+      },
+    ],
     links: [
       {
         rel: "stylesheet",

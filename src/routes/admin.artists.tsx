@@ -23,6 +23,7 @@ type Artist = {
 };
 
 export const Route = createFileRoute("/admin/artists")({
+  head: () => ({ meta: [{ title: "Artists — Revival Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: ArtistsAdmin,
 });
 

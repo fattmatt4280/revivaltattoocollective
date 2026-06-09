@@ -19,6 +19,10 @@ export const Route = createFileRoute("/merch")({
         property: "og:description",
         content: "Signed prints and limited drops from Revival Tattoo Collective.",
       },
+      { property: "og:url", content: "https://revivaltattoocollective.com/merch" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://revivaltattoocollective.com/merch" },
     ],
   }),
   component: MerchPage,

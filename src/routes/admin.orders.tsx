@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { formatPrice } from "@/lib/products";
 
 export const Route = createFileRoute("/admin/orders")({
+  head: () => ({ meta: [{ title: "Orders — Revival Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: AdminOrders,
 });
 

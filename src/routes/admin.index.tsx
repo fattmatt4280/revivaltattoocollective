@@ -5,6 +5,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { Users, Image, CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({ meta: [{ title: "Overview — Revival Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: AdminOverview,
 });
 

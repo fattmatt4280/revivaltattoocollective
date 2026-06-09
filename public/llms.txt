@@ -1,0 +1,8 @@
+# Revival Tattoo Collective
+
+> Editorial tattoo studio in Largo, FL specializing in color realism, surrealism, American traditional, lettering, and sign painting.
+
+## Pages
+
+- [Home](/): Studio overview, featured artists, gallery, about, and booking.
+- [Merch](/merch): Signed prints and limited drops shipped from the studio.

@@ -13,6 +13,7 @@ type Meta = { title: string; description: string };
 type Contact = { address: string; phone: string; hours: string };
 
 export const Route = createFileRoute("/admin/settings")({
+  head: () => ({ meta: [{ title: "Settings — Revival Admin" }, { name: "robots", content: "noindex,nofollow" }] }),
   component: SettingsAdmin,
 });
 
