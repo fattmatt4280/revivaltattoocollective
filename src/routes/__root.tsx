@@ -76,31 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Revival Tattoo Collective — Editorial Tattoo Studio" },
       { name: "description", content: "Revival Tattoo Collective is a gallery-forward tattoo studio specializing in color realism, surrealism, traditional, and lettering." },
-      { property: "og:title", content: "Revival Tattoo Collective" },
-      { property: "og:description", content: "An editorial tattoo collective. Color realism, surrealism, traditional, lettering." },
+      { property: "og:title", content: "Revival Tattoo Collective — Editorial Tattoo Studio" },
+      { property: "og:description", content: "Revival Tattoo Collective is a gallery-forward tattoo studio specializing in color realism, surrealism, traditional, and lettering." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Revival Tattoo Collective" },
       { name: "twitter:card", content: "summary_large_image" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Revival Tattoo Collective",
-          url: "https://revivaltattoocollective.com",
-          telephone: "+1-727-600-8001",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "519 Highland Ave N, Suite A",
-            addressLocality: "Largo",
-            addressRegion: "FL",
-            postalCode: "33770",
-            addressCountry: "US",
-          },
-        }),
-      },
+      { name: "twitter:title", content: "Revival Tattoo Collective — Editorial Tattoo Studio" },
+      { name: "twitter:description", content: "Revival Tattoo Collective is a gallery-forward tattoo studio specializing in color realism, surrealism, traditional, and lettering." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dfa7ed0e-59de-4cfc-b1e8-44a242fedb48/id-preview-9608b218--7ba62552-d0e0-4f15-a2f3-4d9ade54917c.lovable.app-1781028614880.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dfa7ed0e-59de-4cfc-b1e8-44a242fedb48/id-preview-9608b218--7ba62552-d0e0-4f15-a2f3-4d9ade54917c.lovable.app-1781028614880.png" },
     ],
     links: [
       {
