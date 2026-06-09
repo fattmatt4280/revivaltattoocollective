@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MerchRouteImport } from './routes/merch'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -25,6 +26,11 @@ import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminArtistsRouteImport } from './routes/admin.artists'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MerchRoute = MerchRouteImport.update({
   id: '/merch',
   path: '/merch',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/login'
     | '/merch'
+    | '/sitemap.xml'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/login'
     | '/merch'
+    | '/sitemap.xml'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/login'
     | '/merch'
+    | '/sitemap.xml'
     | '/admin/artists'
     | '/admin/bookings'
     | '/admin/gallery'
@@ -212,6 +224,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   MerchRoute: typeof MerchRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BookCheckoutRoute: typeof BookCheckoutRoute
   BookReturnRoute: typeof BookReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -219,6 +232,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/merch': {
       id: '/merch'
       path: '/merch'
@@ -365,6 +385,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRouteWithChildren,
   LoginRoute: LoginRoute,
   MerchRoute: MerchRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   BookCheckoutRoute: BookCheckoutRoute,
   BookReturnRoute: BookReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
