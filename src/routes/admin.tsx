@@ -7,7 +7,15 @@ import { toast } from "sonner";
 import { claimFirstAdminRole } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Revival Tattoo Collective" }, { name: "robots", content: "noindex,nofollow" }] }),
+  head: () => ({
+    meta: [
+      { title: "Admin — Revival Tattoo Collective" },
+      { name: "description", content: "Studio administration for Revival Tattoo Collective." },
+      { property: "og:title", content: "Admin — Revival Tattoo Collective" },
+      { property: "og:description", content: "Studio administration." },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
   component: AdminLayout,
 });
 

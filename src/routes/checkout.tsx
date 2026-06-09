@@ -11,6 +11,10 @@ export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — Revival Tattoo Collective" },
+      { name: "description", content: "Securely complete your Revival Tattoo Collective order — signed prints and limited drops shipped from Largo, FL." },
+      { property: "og:title", content: "Checkout — Revival Tattoo Collective" },
+      { property: "og:description", content: "Complete your Revival Tattoo Collective order." },
+      { property: "og:url", content: "https://revivaltattoocollective.com/checkout" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

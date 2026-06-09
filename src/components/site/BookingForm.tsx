@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,6 +44,16 @@ export function clearBookingDraft() {
 
 export function BookingForm() {
   const navigate = useNavigate();
+  const ids = {
+    artist: useId(),
+    style: useId(),
+    description: useId(),
+    date: useId(),
+    reference: useId(),
+    name: useId(),
+    email: useId(),
+    phone: useId(),
+  };
   const { data: artists } = useQuery({
     queryKey: ["booking-artists"],
     queryFn: async () => {
@@ -141,8 +151,9 @@ export function BookingForm() {
             </div>
           </Field>
 
-          <Field label="Preferred artist">
+          <Field label="Preferred artist" htmlFor={ids.artist}>
             <select
+              id={ids.artist}
               value={artistId}
               onChange={(e) => setArtistId(e.target.value)}
               className="w-full bg-ink border border-border px-3 py-3 text-sm text-bone"
@@ -154,8 +165,9 @@ export function BookingForm() {
             </select>
           </Field>
 
-          <Field label="Style">
+          <Field label="Style" htmlFor={ids.style}>
             <select
+              id={ids.style}
               value={style}
               onChange={(e) => setStyle(e.target.value)}
               className="w-full bg-ink border border-border px-3 py-3 text-sm text-bone"
@@ -165,8 +177,9 @@ export function BookingForm() {
             </select>
           </Field>
 
-          <Field label="Describe your idea" full>
+          <Field label="Describe your idea" full htmlFor={ids.description}>
             <textarea
+              id={ids.description}
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -177,8 +190,9 @@ export function BookingForm() {
             />
           </Field>
 
-          <Field label="Preferred date (optional)">
+          <Field label="Preferred date (optional)" htmlFor={ids.date}>
             <input
+              id={ids.date}
               type="date"
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
@@ -186,8 +200,9 @@ export function BookingForm() {
             />
           </Field>
 
-          <Field label="Reference image (optional)">
+          <Field label="Reference image (optional)" htmlFor={ids.reference}>
             <input
+              id={ids.reference}
               type="file"
               accept="image/*"
               onChange={(e) => setReferenceFile(e.target.files?.[0] ?? null)}
@@ -195,8 +210,9 @@ export function BookingForm() {
             />
           </Field>
 
-          <Field label="Your name">
+          <Field label="Your name" htmlFor={ids.name}>
             <input
+              id={ids.name}
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -205,8 +221,9 @@ export function BookingForm() {
             />
           </Field>
 
-          <Field label="Email">
+          <Field label="Email" htmlFor={ids.email}>
             <input
+              id={ids.email}
               required
               type="email"
               value={email}
@@ -216,8 +233,9 @@ export function BookingForm() {
             />
           </Field>
 
-          <Field label="Phone (optional)">
+          <Field label="Phone (optional)" htmlFor={ids.phone}>
             <input
+              id={ids.phone}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               maxLength={40}
@@ -243,10 +261,10 @@ export function BookingForm() {
   );
 }
 
-function Field({ label, full, children }: { label: string; full?: boolean; children: React.ReactNode }) {
+function Field({ label, full, htmlFor, children }: { label: string; full?: boolean; htmlFor?: string; children: React.ReactNode }) {
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <label className="block text-[10px] tracking-editorial uppercase text-muted-foreground mb-2">{label}</label>
+      <label htmlFor={htmlFor} className="block text-[10px] tracking-editorial uppercase text-muted-foreground mb-2">{label}</label>
       {children}
     </div>
   );
