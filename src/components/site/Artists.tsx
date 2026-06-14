@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Artist = {
+  id: string;
   slug: string;
   name: string;
   specialty: string;
@@ -12,41 +13,6 @@ export type Artist = {
   accentNumber: string;
 };
 
-export const ARTISTS: Artist[] = [
-  {
-    slug: "brady",
-    name: "Brady Martin",
-    specialty: "Lettering · Sign Painting · Owner",
-    bio:
-      "Founder of Revival. Brady is a tattooist and sign painter — script, blackletter, and custom typography on skin. He treats every word as architecture: measured, weighted, and built to live a lifetime.",
-    handles: [
-      { handle: "@revivalletters", url: "https://instagram.com/revivalletters" },
-    ],
-    accentNumber: "01",
-  },
-  {
-    slug: "ashlyn",
-    name: "Ashlyn",
-    specialty: "American Traditional",
-    bio:
-      "Bold lines, packed color, and the discipline of tradition. Ashlyn approaches every flash sheet with reverence for the form and an editor's eye.",
-    handles: [
-      { handle: "@inkbyashlyn", url: "https://instagram.com/inkbyashlyn" },
-    ],
-    accentNumber: "02",
-  },
-  {
-    slug: "matt",
-    name: "Matt",
-    specialty: "Color Realism · Surrealism",
-    bio:
-      "Saturated, dream-state portraits and surreal compositions. Matt builds pieces that read like still frames pulled from a half-remembered film.",
-    handles: [
-      { handle: "@shyftd.ink", url: "https://instagram.com/shyftd.ink" },
-    ],
-    accentNumber: "03",
-  },
-];
 
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   return (
