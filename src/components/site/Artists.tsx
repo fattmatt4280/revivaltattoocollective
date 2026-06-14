@@ -35,20 +35,14 @@ function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   );
 }
 
-function ArtistThumbs({ artistName }: { artistName: string }) {
+function ArtistThumbs({ artistId, artistName }: { artistId: string; artistName: string }) {
   const { data: images } = useQuery({
-    queryKey: ["artist-thumbs", artistName],
+    queryKey: ["artist-thumbs", artistId],
     queryFn: async () => {
-      const { data: artistRow } = await supabase
-        .from("artists")
-        .select("id")
-        .ilike("name", artistName)
-        .maybeSingle();
-      if (!artistRow?.id) return [];
       const { data, error } = await supabase
         .from("gallery_images")
         .select("id,public_url,alt_text")
-        .eq("artist_id", artistRow.id)
+        .eq("artist_id", artistId)
         .eq("visible", true)
         .order("display_order", { ascending: true })
         .limit(4);
@@ -138,7 +132,7 @@ function ArtistCard({ artist }: { artist: Artist }) {
 
         {/* Thumbs */}
         <div className="col-span-12 md:col-span-7">
-          <ArtistThumbs artistName={artist.name} />
+          <ArtistThumbs artistId={artist.id} artistName={artist.name} />
         </div>
       </div>
     </article>
@@ -146,6 +140,27 @@ function ArtistCard({ artist }: { artist: Artist }) {
 }
 
 export function Artists() {
+  const { data: artists } = useQuery({
+    queryKey: ["public-artists"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("artists")
+        .select("id,slug,name,specialty,bio,instagram_handles,display_order")
+        .eq("active", true)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []).map((a, i) => ({
+        id: a.id,
+        slug: a.slug,
+        name: a.name,
+        specialty: a.specialty,
+        bio: a.bio ?? "",
+        handles: (a.instagram_handles as Artist["handles"]) ?? [],
+        accentNumber: String(i + 1).padStart(2, "0"),
+      })) as Artist[];
+    },
+  });
+
   return (
     <section id="artists" className="relative bg-ink py-28 md:py-40">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
@@ -164,7 +179,7 @@ export function Artists() {
         </div>
 
         <div>
-          {ARTISTS.map((a) => (
+          {(artists ?? []).map((a) => (
             <ArtistCard key={a.slug} artist={a} />
           ))}
         </div>
