@@ -106,7 +106,7 @@ export function Gallery() {
                       key={img.id}
                       to="/artists/$slug"
                       params={{ slug: artist.slug }}
-                      className="relative aspect-square overflow-hidden bg-secondary group block"
+                      className="relative aspect-[3/4] overflow-hidden bg-secondary group block"
                     >
                       <img
                         src={optimizeUrl(img.public_url, 400)}

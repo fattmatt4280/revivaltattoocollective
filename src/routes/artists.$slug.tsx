@@ -185,7 +185,7 @@ function ArtistPortfolio() {
                 {images.map((img, idx) => (
                   <figure
                     key={img.id}
-                    className="relative aspect-square overflow-hidden bg-secondary group"
+                    className="relative aspect-[3/4] overflow-hidden bg-secondary group"
                   >
                     <img
                       src={optimizeUrl(img.public_url, 600)}
