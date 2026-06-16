@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { CartDrawer } from "@/components/site/CartDrawer";
+import { useAuth } from "@/lib/auth";
 
 const links = [
   { to: "/", label: "Index" },
@@ -13,6 +14,7 @@ const links = [
 
 export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   return (
     <>
@@ -42,6 +44,21 @@ export function Nav() {
 
           <div className="flex items-center gap-4">
             <CartDrawer />
+            {user ? (
+              <Link
+                to="/admin"
+                className="hidden md:inline-flex text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+              >
+                {isAdmin ? "Admin" : "Account"}
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="hidden md:inline-flex text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
             <a
               href="/#book"
               className="hidden md:inline-flex text-[11px] tracking-editorial uppercase px-5 py-2.5 border border-bone/80 text-bone hover:bg-bone hover:text-ink transition-colors"
@@ -81,7 +98,7 @@ export function Nav() {
               Merch
             </Link>
           </nav>
-          <div className="px-6 pt-10">
+          <div className="px-6 pt-10 flex flex-col gap-4">
             <a
               href="/#book"
               onClick={() => setMobileOpen(false)}
@@ -89,6 +106,23 @@ export function Nav() {
             >
               Book Now <span className="text-primary">→</span>
             </a>
+            {user ? (
+              <Link
+                to="/admin"
+                onClick={() => setMobileOpen(false)}
+                className="text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+              >
+                {isAdmin ? "Admin Panel" : "Account"}
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                className="text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       )}
