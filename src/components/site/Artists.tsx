@@ -2,6 +2,7 @@ import { Instagram, Facebook } from "lucide-react";
 import { TikTokIcon } from "@/components/icons/TikTokIcon";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "@tanstack/react-router";
 
 export type Artist = {
   id: string;
@@ -13,6 +14,12 @@ export type Artist = {
   accentNumber: string;
 };
 
+type ThumbImage = { id: string; public_url: string; alt_text: string | null; artist_id: string | null };
+
+function optimizeUrl(url: string, width: number, quality = 75): string {
+  return url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
+    `?width=${width}&quality=${quality}`;
+}
 
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   return (
@@ -35,27 +42,11 @@ function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   );
 }
 
-function ArtistThumbs({ artistId, artistName }: { artistId: string; artistName: string }) {
-  const { data: images } = useQuery({
-    queryKey: ["artist-thumbs", artistId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("gallery_images")
-        .select("id,public_url,alt_text")
-        .eq("artist_id", artistId)
-        .eq("visible", true)
-        .order("display_order", { ascending: true })
-        .limit(4);
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  const items = images ?? [];
+function ArtistThumbs({ images, artistName, priority }: { images: ThumbImage[]; artistName: string; priority?: boolean }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
       {[0, 1, 2, 3].map((i) => {
-        const img = items[i];
+        const img = images[i];
         if (img) {
           return (
             <figure
@@ -63,9 +54,10 @@ function ArtistThumbs({ artistId, artistName }: { artistId: string; artistName: 
               className="relative aspect-[3/4] overflow-hidden bg-secondary border border-border/60 group/thumb"
             >
               <img
-                src={img.public_url}
+                src={optimizeUrl(img.public_url, 400)}
                 alt={img.alt_text ?? `${artistName} tattoo work`}
-                loading="lazy"
+                loading={priority && i < 2 ? "eager" : "lazy"}
+                fetchPriority={priority && i === 0 ? "high" : "auto"}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
               />
             </figure>
@@ -77,7 +69,7 @@ function ArtistThumbs({ artistId, artistName }: { artistId: string; artistName: 
   );
 }
 
-function ArtistCard({ artist }: { artist: Artist }) {
+function ArtistCard({ artist, images, priority }: { artist: Artist; images: ThumbImage[]; priority?: boolean }) {
   return (
     <article className="group relative border-t border-border pt-10 pb-12">
       <div className="grid grid-cols-12 gap-6 md:gap-10 items-start">
@@ -121,18 +113,28 @@ function ArtistCard({ artist }: { artist: Artist }) {
             ))}
           </div>
 
-          <a
-            href={`#book?artist=${artist.slug}`}
-            className="mt-8 inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-bone border-b border-bone/40 pb-1 hover:border-primary hover:text-primary transition-colors"
-          >
-            Book with {artist.name}
-            <span className="text-primary">→</span>
-          </a>
+          <div className="mt-8 flex flex-wrap gap-6">
+            <Link
+              to="/artists/$slug"
+              params={{ slug: artist.slug }}
+              className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-bone border-b border-bone/40 pb-1 hover:border-primary hover:text-primary transition-colors"
+            >
+              View Portfolio
+              <span className="text-primary">→</span>
+            </Link>
+            <a
+              href={`#book?artist=${artist.slug}`}
+              className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-muted-foreground border-b border-muted-foreground/40 pb-1 hover:border-bone hover:text-bone transition-colors"
+            >
+              Book {artist.name}
+              <span>→</span>
+            </a>
+          </div>
         </header>
 
         {/* Thumbs */}
         <div className="col-span-12 md:col-span-7">
-          <ArtistThumbs artistId={artist.id} artistName={artist.name} />
+          <ArtistThumbs images={images} artistName={artist.name} priority={priority} />
         </div>
       </div>
     </article>
@@ -161,6 +163,28 @@ export function Artists() {
     },
   });
 
+  // Single batched query for all artist thumbnails instead of N+1
+  const { data: allThumbs } = useQuery({
+    queryKey: ["all-artist-thumbs"],
+    enabled: (artists?.length ?? 0) > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("id,public_url,alt_text,artist_id,display_order")
+        .in("artist_id", artists!.map((a) => a.id))
+        .eq("visible", true)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as ThumbImage[];
+    },
+  });
+
+  // Group thumbnails by artist, keeping only first 4 each
+  const thumbsByArtist = (artists ?? []).reduce<Record<string, ThumbImage[]>>((acc, a) => {
+    acc[a.id] = (allThumbs ?? []).filter((t) => t.artist_id === a.id).slice(0, 4);
+    return acc;
+  }, {});
+
   return (
     <section id="artists" className="relative bg-ink py-28 md:py-40">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
@@ -179,8 +203,13 @@ export function Artists() {
         </div>
 
         <div>
-          {(artists ?? []).map((a) => (
-            <ArtistCard key={a.slug} artist={a} />
+          {(artists ?? []).map((a, idx) => (
+            <ArtistCard
+              key={a.slug}
+              artist={a}
+              images={thumbsByArtist[a.id] ?? []}
+              priority={idx === 0}
+            />
           ))}
         </div>
       </div>
