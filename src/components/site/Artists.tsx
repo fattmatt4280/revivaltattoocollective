@@ -240,11 +240,11 @@ export function Artists() {
               § Roster
             </p>
             <h2 className="font-display text-bone text-5xl md:text-7xl leading-[0.95] max-w-3xl">
-              Three artists, <span className="italic text-muted-foreground">three obsessions.</span>
+              Two chairs, <span className="italic text-muted-foreground">one obsession.</span>
             </h2>
           </div>
           <span className="hidden md:block font-display text-muted-foreground text-sm">
-            03 — Collective
+            02 — Collective
           </span>
         </div>
 
