@@ -1,76 +1,113 @@
-export function Hero() {
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+type HeroImage = { id: string; public_url: string; alt_text: string | null };
+
+function optimizeUrl(url: string, width: number) {
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-ink">
-      {/* Layered backdrop */}
-      <div className="absolute inset-0 bg-grain opacity-60" />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, oklch(0.22 0.08 25 / 0.45), transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 0%, transparent 60%, oklch(0.08 0.003 20) 100%)",
-        }}
-      />
+    url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
+    `?width=${width}&quality=80`
+  );
+}
+
+export function Hero() {
+  const { data: images } = useQuery({
+    queryKey: ["hero-gallery-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("id,public_url,alt_text")
+        .eq("visible", true)
+        .order("display_order", { ascending: true })
+        .limit(8);
+      if (error) throw error;
+      return (data ?? []) as HeroImage[];
+    },
+  });
+
+  const imgs = images ?? [];
+
+  return (
+    <section className="relative h-screen w-full overflow-hidden bg-ink">
+      <div className="absolute inset-0 bg-grain opacity-60 pointer-events-none" />
 
       {/* Top label bar */}
       <div className="absolute top-24 left-0 right-0 z-10 px-6 md:px-10">
         <div className="mx-auto max-w-[1600px] flex items-center justify-between text-[10px] tracking-editorial uppercase text-muted-foreground">
           <span>Clearwater, FL — Est. Collective</span>
-          <span className="hidden md:inline">Tattoo · Sign Painting · Lettering · Color Realism</span>
+          <span className="hidden md:inline">
+            Tattoo · Sign Painting · Lettering · Color Realism
+          </span>
           <span>N° 001</span>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col justify-center pt-40 md:pt-32 pb-32 md:pb-28 px-6 md:px-10">
-        <div className="mx-auto max-w-[1600px] w-full">
-          <p className="text-[11px] tracking-editorial uppercase text-primary mb-8 animate-fade-in">
-            Revival Tattoo Collective
-          </p>
+      {/* Two-column layout — grid-rows-[100%] forces the single row to fill the h-full container */}
+      <div className="relative z-10 h-full grid grid-rows-[100%] grid-cols-1 lg:grid-cols-[1fr_1.3fr]">
+        {/* Left — editorial text */}
+        <div className="flex flex-col justify-center min-h-0 pt-36 pb-28 lg:pt-28 lg:pb-20 px-6 md:px-10 lg:pl-10 lg:pr-10">
+          <div className="max-w-lg">
+            <p className="text-[11px] tracking-editorial uppercase text-primary mb-8 animate-fade-in">
+              Revival Tattoo Collective
+            </p>
 
-          <h1 className="font-display text-bone leading-[0.92] tracking-[-0.02em] animate-fade-up">
-            <span className="block text-[clamp(3.5rem,11vw,11rem)] font-normal">
-              Ink as
-            </span>
-            <span className="block text-[clamp(3.5rem,11vw,11rem)] italic font-light text-muted-foreground">
-              artifact.
-            </span>
-          </h1>
+            <h1 className="font-display text-bone leading-[0.92] tracking-[-0.02em] animate-fade-up">
+              <span className="block text-[clamp(3.2rem,8vw,7.5rem)] font-normal">
+                Ink as
+              </span>
+              <span className="block text-[clamp(3.2rem,8vw,7.5rem)] italic font-light text-muted-foreground">
+                artifact.
+              </span>
+            </h1>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
             <p
-              className="md:col-span-5 md:col-start-7 text-base md:text-lg text-muted-foreground leading-relaxed max-w-md animate-fade-up"
+              className="mt-8 text-base text-muted-foreground leading-relaxed animate-fade-up max-w-sm"
               style={{ animationDelay: "0.2s" }}
             >
-              Expert tattoo and sign painting in Clearwater, Florida — minutes
-              from Clearwater Beach. A gallery-forward studio where editorial
-              restraint meets the physicality of the needle.
+              Expert tattoo and sign painting in Clearwater, Florida. A
+              gallery-forward studio where editorial restraint meets the
+              physicality of the needle.
             </p>
-          </div>
 
-          <div
-            className="mt-16 flex flex-col sm:flex-row items-start sm:items-center gap-6 animate-fade-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <a
-              href="/#book"
-              className="btn-shimmer group inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+            <div
+              className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 animate-fade-up"
+              style={{ animationDelay: "0.4s" }}
             >
-              Reserve a Session
-              <span className="w-6 h-px bg-current transition-all group-hover:w-10" />
-            </a>
-            <a
-              href="#artists"
-              className="text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
-            >
-              Meet the Artists
-            </a>
+              <a
+                href="/#book"
+                className="btn-shimmer group inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                Reserve a Session
+                <span className="w-6 h-px bg-current transition-all group-hover:w-10" />
+              </a>
+              <a
+                href="#artists"
+                className="text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+              >
+                Browse the Work →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — masonry columns, images at natural aspect ratio */}
+        <div className="hidden lg:block overflow-hidden pt-20 pb-16 px-4 pl-2">
+          <div className="columns-2 gap-2">
+            {imgs.map((img, i) => (
+              <a
+                key={img.id}
+                href="#gallery"
+                className="block mb-2 overflow-hidden group break-inside-avoid"
+              >
+                <img
+                  src={optimizeUrl(img.public_url, 700)}
+                  alt={img.alt_text ?? "Revival Tattoo Collective"}
+                  loading={i < 2 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                  className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+              </a>
+            ))}
           </div>
         </div>
       </div>

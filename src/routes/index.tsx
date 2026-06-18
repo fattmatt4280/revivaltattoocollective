@@ -8,19 +8,31 @@ import { About } from "@/components/site/About";
 import { Contact } from "@/components/site/Contact";
 import { BookingForm } from "@/components/site/BookingForm";
 import { Footer } from "@/components/site/Footer";
+import { StickyBookButton } from "@/components/site/StickyBookButton";
+import { ConsultationCTA } from "@/components/site/ConsultationCTA";
+import { InstagramSection } from "@/components/site/InstagramSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Revival Tattoo Collective — Editorial Tattoo Studio in Largo, FL" },
-      { name: "description", content: "Revival Tattoo Collective is a gallery-forward tattoo studio in Largo, FL specializing in color realism, surrealism, traditional, and lettering work." },
-      { property: "og:title", content: "Revival Tattoo Collective — Editorial Tattoo Studio in Largo, FL" },
-      { property: "og:description", content: "Color realism, surrealism, traditional, and lettering tattoos from a Largo, FL collective." },
+      { title: "Revival Tattoo Collective — Editorial Tattoo Studio in Clearwater, FL" },
+      {
+        name: "description",
+        content:
+          "Revival Tattoo Collective is a gallery-forward tattoo studio in Clearwater, FL specializing in color realism, surrealism, traditional, and lettering work.",
+      },
+      {
+        property: "og:title",
+        content: "Revival Tattoo Collective — Editorial Tattoo Studio in Clearwater, FL",
+      },
+      {
+        property: "og:description",
+        content:
+          "Color realism, surrealism, traditional, and lettering tattoos from a Clearwater, FL collective.",
+      },
       { property: "og:url", content: "https://revivaltattoocollective.com/" },
     ],
-    links: [
-      { rel: "canonical", href: "https://revivaltattoocollective.com/" },
-    ],
+    links: [{ rel: "canonical", href: "https://revivaltattoocollective.com/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -61,12 +73,22 @@ function Index() {
         <Hero />
         <StyleTicker />
         <Artists />
+        <ConsultationCTA
+          headline="See someone whose work speaks to you?"
+          sub="Choose your artist and reserve a session. A $100–$200 deposit holds your chair and applies to your final balance."
+        />
         <Gallery />
+        <ConsultationCTA
+          headline="Have an idea forming?"
+          sub="You don't need a finished concept to start. Book a consultation and we'll bring it into focus together."
+        />
+        <InstagramSection />
         <About />
         <BookingForm />
         <Contact />
       </main>
       <Footer />
+      <StickyBookButton />
     </div>
   );
 }

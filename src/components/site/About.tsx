@@ -1,4 +1,3 @@
-import { useRef, useEffect } from "react";
 import { useRevealChildren } from "@/hooks/useReveal";
 
 export function About() {
@@ -7,18 +6,17 @@ export function About() {
   return (
     <section id="about" className="relative bg-ink py-28 md:py-40 border-t border-border/60">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
-        <div
-          ref={containerRef}
-          className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16"
-        >
+        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-5 reveal-left">
             <p className="text-[11px] tracking-editorial uppercase text-primary mb-6">
               § About
             </p>
             <h2 className="font-display text-bone text-5xl md:text-6xl leading-[0.95]">
-              Florida tattoo artists <span className="italic text-muted-foreground">with a passion.</span>
+              Florida tattoo artists{" "}
+              <span className="italic text-muted-foreground">with a passion.</span>
             </h2>
           </div>
+
           <div className="md:col-span-6 md:col-start-7 space-y-6 text-base text-muted-foreground leading-relaxed reveal">
             <p>
               Revival Tattoo Collective sits just minutes from Clearwater
@@ -35,6 +33,16 @@ export function About() {
             <p className="text-bone">
               Local to Florida or traveling through? Book a session.
             </p>
+
+            <div className="pt-4">
+              <a
+                href="/#book"
+                className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase px-8 py-4 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                Start the Conversation
+                <span className="w-5 h-px bg-current" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

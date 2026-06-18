@@ -19,12 +19,12 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BookReturnRouteImport } from './routes/book.return'
 import { Route as BookCheckoutRouteImport } from './routes/book.checkout'
+import { Route as ArtistsSlugRouteImport } from './routes/artists.$slug'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminArtistsRouteImport } from './routes/admin.artists'
-import { Route as ArtistsSlugRouteImport } from './routes/artists.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -77,6 +77,11 @@ const BookCheckoutRoute = BookCheckoutRouteImport.update({
   path: '/book/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtistsSlugRoute = ArtistsSlugRouteImport.update({
+  id: '/artists/$slug',
+  path: '/artists/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -102,11 +107,6 @@ const AdminArtistsRoute = AdminArtistsRouteImport.update({
   path: '/artists',
   getParentRoute: () => AdminRoute,
 } as any)
-const ArtistsSlugRoute = ArtistsSlugRouteImport.update({
-  id: '/artists/$slug',
-  path: '/artists/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -126,12 +126,12 @@ export interface FileRoutesByFullPath {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -144,12 +144,12 @@ export interface FileRoutesByTo {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -164,12 +164,12 @@ export interface FileRoutesById {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -185,12 +185,12 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/artists/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
-    | '/artists/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -203,12 +203,12 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/artists/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
     | '/admin'
     | '/api/public/payments/webhook'
-    | '/artists/$slug'
   id:
     | '__root__'
     | '/'
@@ -222,12 +222,12 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
+    | '/artists/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
     | '/admin/'
     | '/api/public/payments/webhook'
-    | '/artists/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -237,21 +237,14 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MerchRoute: typeof MerchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ArtistsSlugRoute: typeof ArtistsSlugRoute
   BookCheckoutRoute: typeof BookCheckoutRoute
   BookReturnRoute: typeof BookReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
-  ArtistsSlugRoute: typeof ArtistsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/artists/$slug': {
-      id: '/artists/$slug'
-      path: '/artists/$slug'
-      fullPath: '/artists/$slug'
-      preLoaderRoute: typeof ArtistsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -320,6 +313,13 @@ declare module '@tanstack/react-router' {
       path: '/book/checkout'
       fullPath: '/book/checkout'
       preLoaderRoute: typeof BookCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artists/$slug': {
+      id: '/artists/$slug'
+      path: '/artists/$slug'
+      fullPath: '/artists/$slug'
+      preLoaderRoute: typeof ArtistsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -406,11 +406,21 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MerchRoute: MerchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ArtistsSlugRoute: ArtistsSlugRoute,
   BookCheckoutRoute: BookCheckoutRoute,
   BookReturnRoute: BookReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
-  ArtistsSlugRoute: ArtistsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

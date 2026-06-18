@@ -18,9 +18,11 @@ export type Artist = {
 
 type ThumbImage = { id: string; public_url: string; alt_text: string | null; artist_id: string | null };
 
-function optimizeUrl(url: string, width: number, quality = 75): string {
-  return url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
-    `?width=${width}&quality=${quality}`;
+function optimizeUrl(url: string, width: number, quality = 80): string {
+  return (
+    url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
+    `?width=${width}&quality=${quality}`
+  );
 }
 
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
@@ -44,25 +46,38 @@ function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   );
 }
 
-function ArtistThumbs({ images, artistName, priority }: { images: ThumbImage[]; artistName: string; priority?: boolean }) {
+function ArtistImageStrip({
+  images,
+  artistName,
+  artistSlug,
+  priority,
+}: {
+  images: ThumbImage[];
+  artistName: string;
+  artistSlug: string;
+  priority?: boolean;
+}) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
       {[0, 1, 2, 3].map((i) => {
         const img = images[i];
         if (img) {
           return (
-            <figure
+            <Link
               key={img.id}
-              className="relative aspect-[4/5] overflow-hidden bg-ink border border-border/60 group/thumb"
+              to="/artists/$slug"
+              params={{ slug: artistSlug }}
+              className="relative aspect-[4/5] overflow-hidden bg-ink border border-border/40 group/thumb block"
             >
               <img
-                src={optimizeUrl(img.public_url, 400)}
+                src={optimizeUrl(img.public_url, 500)}
                 alt={img.alt_text ?? `${artistName} tattoo work`}
                 loading={priority && i < 2 ? "eager" : "lazy"}
                 fetchPriority={priority && i === 0 ? "high" : "auto"}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover/thumb:scale-105"
               />
-            </figure>
+              <div className="absolute inset-0 bg-ink/20 group-hover/thumb:bg-ink/0 transition-colors duration-500" />
+            </Link>
           );
         }
         return <ThumbPlaceholder key={i} name={artistName} idx={i + 1} />;
@@ -80,7 +95,12 @@ function ScrambledName({ name }: { name: string }) {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setTriggered(true); observer.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTriggered(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.3 }
     );
     observer.observe(el);
@@ -97,7 +117,15 @@ function ScrambledName({ name }: { name: string }) {
   );
 }
 
-function ArtistCard({ artist, images, priority }: { artist: Artist; images: ThumbImage[]; priority?: boolean }) {
+function ArtistCard({
+  artist,
+  images,
+  priority,
+}: {
+  artist: Artist;
+  images: ThumbImage[];
+  priority?: boolean;
+}) {
   const cardRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -110,7 +138,7 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -119,13 +147,20 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
   return (
     <article
       ref={cardRef as React.RefObject<HTMLElement>}
-      className="group relative border-t border-border pt-10 pb-12 reveal">
-      <div className="grid grid-cols-12 gap-6 md:gap-10 items-start">
-        {/* Accent number */}
-        <div className="col-span-12 md:col-span-1">
-          <span className="font-display text-primary text-xl">
-            {artist.accentNumber}
-          </span>
+      className="group relative border-t border-border pt-10 pb-14 reveal"
+    >
+      {/* Artwork first — full width image strip */}
+      <ArtistImageStrip
+        images={images}
+        artistName={artist.name}
+        artistSlug={artist.slug}
+        priority={priority}
+      />
+
+      {/* Artist identity below the work */}
+      <div className="mt-8 grid grid-cols-12 gap-6 items-start">
+        <div className="col-span-1 hidden md:block">
+          <span className="font-display text-primary text-xl">{artist.accentNumber}</span>
         </div>
 
         {/* Name + meta */}
@@ -134,11 +169,10 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
           <p className="mt-4 text-[11px] tracking-editorial uppercase text-primary">
             {artist.specialty}
           </p>
-          <p className="mt-6 text-sm leading-relaxed text-muted-foreground max-w-sm">
+          <p className="mt-5 text-sm leading-relaxed text-muted-foreground max-w-sm">
             {artist.bio}
           </p>
-
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
             {artist.handles.map((h, i) => (
               <a
                 key={`${h.handle}-${h.platform ?? i}`}
@@ -158,29 +192,25 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
               </a>
             ))}
           </div>
-
-          <div className="mt-8 flex flex-wrap gap-6">
-            <Link
-              to="/artists/$slug"
-              params={{ slug: artist.slug }}
-              className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-bone border-b border-bone/40 pb-1 hover:border-primary hover:text-primary transition-colors"
-            >
-              View Portfolio
-              <span className="text-primary">→</span>
-            </Link>
-            <a
-              href={`#book?artistId=${artist.id}`}
-              className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-muted-foreground border-b border-muted-foreground/40 pb-1 hover:border-bone hover:text-bone transition-colors"
-            >
-              Book {artist.name}
-              <span>→</span>
-            </a>
-          </div>
         </header>
 
-        {/* Thumbs */}
-        <div className="col-span-12 md:col-span-7">
-          <ArtistThumbs images={images} artistName={artist.name} priority={priority} />
+        {/* CTAs */}
+        <div className="col-span-12 md:col-span-7 md:col-start-6 flex flex-wrap items-center gap-4 md:justify-end md:pt-2">
+          <Link
+            to="/artists/$slug"
+            params={{ slug: artist.slug }}
+            className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-muted-foreground border border-border px-6 py-3 hover:border-bone/60 hover:text-bone transition-colors"
+          >
+            View Full Portfolio
+            <span>→</span>
+          </Link>
+          <a
+            href={`/#book?artistId=${artist.id}`}
+            className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            Book {artist.name}
+            <span className="w-4 h-px bg-current" />
+          </a>
         </div>
       </div>
     </article>
@@ -209,7 +239,6 @@ export function Artists() {
     },
   });
 
-  // Single batched query for all artist thumbnails instead of N+1
   const { data: allThumbs } = useQuery({
     queryKey: ["all-artist-thumbs"],
     enabled: (artists?.length ?? 0) > 0,
@@ -225,22 +254,25 @@ export function Artists() {
     },
   });
 
-  // Group thumbnails by artist, keeping only first 4 each
-  const thumbsByArtist = (artists ?? []).reduce<Record<string, ThumbImage[]>>((acc, a) => {
-    acc[a.id] = (allThumbs ?? []).filter((t) => t.artist_id === a.id).slice(0, 4);
-    return acc;
-  }, {});
+  const thumbsByArtist = (artists ?? []).reduce<Record<string, ThumbImage[]>>(
+    (acc, a) => {
+      acc[a.id] = (allThumbs ?? []).filter((t) => t.artist_id === a.id).slice(0, 4);
+      return acc;
+    },
+    {}
+  );
 
   return (
-    <section id="artists" className="relative bg-ink py-28 md:py-40">
+    <section id="artists" className="relative bg-ink py-16 md:py-24">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
-        <div className="flex items-end justify-between mb-16 md:mb-24">
+        <div className="flex items-end justify-between mb-8 md:mb-12">
           <div>
             <p className="text-[11px] tracking-editorial uppercase text-primary mb-6">
               § Roster
             </p>
             <h2 className="font-display text-bone text-5xl md:text-7xl leading-[0.95] max-w-3xl">
-              Two chairs, <span className="italic text-muted-foreground">one obsession.</span>
+              2 styles,{" "}
+              <span className="italic text-muted-foreground">1 obsession.</span>
             </h2>
           </div>
           <span className="hidden md:block font-display text-muted-foreground text-sm">
