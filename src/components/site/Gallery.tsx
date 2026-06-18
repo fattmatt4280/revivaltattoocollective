@@ -102,19 +102,19 @@ export function Gallery() {
                   </Link>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                <div className="columns-2 md:columns-3 lg:columns-6 gap-3 md:gap-4">
                   {thumbs.map((img, idx) => (
                     <Link
                       key={img.id}
                       to="/artists/$slug"
                       params={{ slug: artist.slug }}
-                      className="relative aspect-[4/5] overflow-hidden bg-ink group block"
+                      className="relative overflow-hidden bg-ink group block mb-3 md:mb-4 break-inside-avoid"
                     >
                       <img
                         src={optimizeUrl(img.public_url, 400)}
                         alt={img.alt_text ?? `${artist.name} tattoo`}
                         loading={idx < 2 ? "eager" : "lazy"}
-                        className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
                       />
                     </Link>
                   ))}

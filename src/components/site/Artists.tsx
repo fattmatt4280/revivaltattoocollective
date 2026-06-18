@@ -60,7 +60,7 @@ function ArtistThumbs({ images, artistName, priority }: { images: ThumbImage[]; 
                 alt={img.alt_text ?? `${artistName} tattoo work`}
                 loading={priority && i < 2 ? "eager" : "lazy"}
                 fetchPriority={priority && i === 0 ? "high" : "auto"}
-                className="w-full h-full object-cover object-center transition-transform duration-500 group-hover/thumb:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
               />
             </figure>
           );
