@@ -108,13 +108,13 @@ export function Gallery() {
                       key={img.id}
                       to="/artists/$slug"
                       params={{ slug: artist.slug }}
-                      className="relative aspect-[3/4] overflow-hidden bg-secondary group block"
+                      className="relative overflow-hidden bg-ink group block"
                     >
                       <img
                         src={optimizeUrl(img.public_url, 400)}
                         alt={img.alt_text ?? `${artist.name} tattoo`}
                         loading={idx < 2 ? "eager" : "lazy"}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
                       />
                     </Link>
                   ))}

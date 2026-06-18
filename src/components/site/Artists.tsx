@@ -26,7 +26,7 @@ function optimizeUrl(url: string, width: number, quality = 75): string {
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   return (
     <div
-      className="relative aspect-[3/4] overflow-hidden bg-secondary border border-border/60 group/thumb"
+      className="relative aspect-[4/5] overflow-hidden bg-secondary border border-border/60 group/thumb"
       style={{
         background:
           "linear-gradient(135deg, oklch(0.18 0.006 20) 0%, oklch(0.13 0.005 20) 100%)",
@@ -53,14 +53,14 @@ function ArtistThumbs({ images, artistName, priority }: { images: ThumbImage[]; 
           return (
             <figure
               key={img.id}
-              className="relative aspect-[3/4] overflow-hidden bg-secondary border border-border/60 group/thumb"
+              className="relative overflow-hidden bg-ink border border-border/60 group/thumb"
             >
               <img
                 src={optimizeUrl(img.public_url, 400)}
                 alt={img.alt_text ?? `${artistName} tattoo work`}
                 loading={priority && i < 2 ? "eager" : "lazy"}
                 fetchPriority={priority && i === 0 ? "high" : "auto"}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                className="w-full h-auto block transition-transform duration-500 group-hover/thumb:scale-105"
               />
             </figure>
           );
