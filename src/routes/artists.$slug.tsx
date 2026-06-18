@@ -210,7 +210,7 @@ function ArtistPortfolio() {
                     <img
                       src={optimizeUrl(img.public_url, 600)}
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
-                      loading={idx < 4 ? "eager" : "lazy"}
+                      loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
                       className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
                     />
