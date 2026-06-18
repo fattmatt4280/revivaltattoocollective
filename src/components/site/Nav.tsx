@@ -5,11 +5,10 @@ import { CartDrawer } from "@/components/site/CartDrawer";
 import { useAuth } from "@/lib/auth";
 
 const links = [
-  { to: "/", label: "Index" },
-  { to: "/", label: "Artists", hash: "artists" },
-  { to: "/", label: "Gallery", hash: "gallery" },
-  { to: "/", label: "About", hash: "about" },
-  { to: "/", label: "Contact", hash: "contact" },
+  { label: "Artists", hash: "artists" },
+  { label: "Gallery", hash: "gallery" },
+  { label: "About", hash: "about" },
+  { label: "Contact", hash: "contact" },
 ];
 
 export function Nav() {
@@ -28,10 +27,10 @@ export function Nav() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-10 text-[11px] tracking-editorial uppercase text-muted-foreground">
-            {links.slice(1).map((l) => (
+            {links.map((l) => (
               <a
                 key={l.label}
-                href={`#${l.hash}`}
+                href={`/#${l.hash}`}
                 className="hover:text-bone transition-colors"
               >
                 {l.label}
@@ -80,10 +79,10 @@ export function Nav() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-ink pt-16 flex flex-col">
           <nav className="flex flex-col px-6 pt-10 gap-0">
-            {links.slice(1).map((l) => (
+            {links.map((l) => (
               <a
                 key={l.label}
-                href={`#${l.hash}`}
+                href={`/#${l.hash}`}
                 onClick={() => setMobileOpen(false)}
                 className="border-b border-border/40 py-5 font-display text-bone text-4xl leading-none hover:text-primary transition-colors"
               >

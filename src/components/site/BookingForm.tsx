@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useState, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,6 +68,15 @@ export function BookingForm() {
 
   const [tier, setTier] = useState<"half_day" | "full_day">("half_day");
   const [artistId, setArtistId] = useState<string>("");
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    const qIdx = hash.indexOf("?");
+    if (qIdx === -1) return;
+    const params = new URLSearchParams(hash.slice(qIdx + 1));
+    const id = params.get("artistId");
+    if (id) setArtistId(id);
+  }, []);
   const [style, setStyle] = useState<string>("");
   const [description, setDescription] = useState("");
   const [preferredDate, setPreferredDate] = useState("");

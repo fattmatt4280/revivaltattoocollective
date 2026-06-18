@@ -36,9 +36,9 @@ export function Footer() {
           <div className="md:col-span-2">
             <p className="text-[10px] tracking-editorial uppercase text-primary mb-4">Site</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#artists" className="hover:text-bone transition-colors">Artists</a></li>
-              <li><a href="#gallery" className="hover:text-bone transition-colors">Gallery</a></li>
-              <li><a href="#book" className="hover:text-bone transition-colors">Book</a></li>
+              <li><a href="/#artists" className="hover:text-bone transition-colors">Artists</a></li>
+              <li><a href="/#gallery" className="hover:text-bone transition-colors">Gallery</a></li>
+              <li><a href="/#book" className="hover:text-bone transition-colors">Book</a></li>
             </ul>
           </div>
         </div>

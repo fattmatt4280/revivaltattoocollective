@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { CursorSpotlight } from "@/components/ui/CursorSpotlight";
 
 function NotFoundComponent() {
   return (
@@ -132,6 +133,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <CursorSpotlight />
         <Outlet />
         <Toaster theme="dark" position="top-center" />
       </AuthProvider>

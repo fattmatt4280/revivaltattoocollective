@@ -199,7 +199,74 @@
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
+  @keyframes marquee-reverse {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes shimmer-sweep {
+    0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateX(220%) skewX(-15deg); opacity: 0; }
+  }
+  @keyframes reveal-up {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes reveal-left {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes spotlight-pulse {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
+  }
+
   .animate-fade-up { animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
   .animate-fade-in { animation: fade-in 1.2s ease-out both; }
   .animate-marquee { animation: marquee 40s linear infinite; }
+  .animate-marquee-reverse { animation: marquee-reverse 50s linear infinite; }
+  .animate-marquee-fast { animation: marquee 18s linear infinite; }
+
+  /* Shimmer button */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 20%,
+      oklch(1 0 0 / 0.18) 50%,
+      transparent 80%
+    );
+    transform: translateX(-100%) skewX(-15deg);
+    animation: shimmer-sweep 3.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Scroll reveal — applied by JS when element enters viewport */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-24px);
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-left.in-view {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

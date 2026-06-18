@@ -1,8 +1,10 @@
+import { useRef, useState, useEffect } from "react";
 import { Instagram, Facebook } from "lucide-react";
 import { TikTokIcon } from "@/components/icons/TikTokIcon";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
+import { useTextScramble } from "@/hooks/useTextScramble";
 
 export type Artist = {
   id: string;
@@ -69,9 +71,55 @@ function ArtistThumbs({ images, artistName, priority }: { images: ThumbImage[]; 
   );
 }
 
-function ArtistCard({ artist, images, priority }: { artist: Artist; images: ThumbImage[]; priority?: boolean }) {
+function ScrambledName({ name }: { name: string }) {
+  const ref = useRef<HTMLElement | null>(null);
+  const [triggered, setTriggered] = useState(false);
+  const display = useTextScramble(name.toUpperCase(), triggered);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setTriggered(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <article className="group relative border-t border-border pt-10 pb-12">
+    <h3
+      ref={ref as React.RefObject<HTMLHeadingElement>}
+      className="font-display text-bone text-5xl md:text-6xl leading-none"
+    >
+      {display}
+    </h3>
+  );
+}
+
+function ArtistCard({ artist, images, priority }: { artist: Artist; images: ThumbImage[]; priority?: boolean }) {
+  const cardRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("in-view");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <article
+      ref={cardRef as React.RefObject<HTMLElement>}
+      className="group relative border-t border-border pt-10 pb-12 reveal">
       <div className="grid grid-cols-12 gap-6 md:gap-10 items-start">
         {/* Accent number */}
         <div className="col-span-12 md:col-span-1">
@@ -82,9 +130,7 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
 
         {/* Name + meta */}
         <header className="col-span-12 md:col-span-4">
-          <h3 className="font-display text-bone text-5xl md:text-6xl leading-none">
-            {artist.name}
-          </h3>
+          <ScrambledName name={artist.name} />
           <p className="mt-4 text-[11px] tracking-editorial uppercase text-primary">
             {artist.specialty}
           </p>
@@ -93,9 +139,9 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
           </p>
 
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
-            {artist.handles.map((h) => (
+            {artist.handles.map((h, i) => (
               <a
-                key={h.handle}
+                key={`${h.handle}-${h.platform ?? i}`}
                 href={h.url}
                 target="_blank"
                 rel="noreferrer"
@@ -123,7 +169,7 @@ function ArtistCard({ artist, images, priority }: { artist: Artist; images: Thum
               <span className="text-primary">→</span>
             </Link>
             <a
-              href={`#book?artist=${artist.slug}`}
+              href={`#book?artistId=${artist.id}`}
               className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-muted-foreground border-b border-muted-foreground/40 pb-1 hover:border-bone hover:text-bone transition-colors"
             >
               Book {artist.name}

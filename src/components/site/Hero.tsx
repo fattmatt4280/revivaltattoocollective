@@ -59,8 +59,8 @@ export function Hero() {
             style={{ animationDelay: "0.4s" }}
           >
             <a
-              href="#book"
-              className="group inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+              href="/#book"
+              className="btn-shimmer group inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
             >
               Reserve a Session
               <span className="w-6 h-px bg-current transition-all group-hover:w-10" />

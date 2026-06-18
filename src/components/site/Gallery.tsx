@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
+import { useRevealChildren } from "@/hooks/useReveal";
 
 function optimizeUrl(url: string, width: number, quality = 75): string {
   return url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
@@ -22,6 +23,7 @@ type ThumbImage = {
 };
 
 export function Gallery() {
+  const containerRef = useRevealChildren(0.1) as React.RefObject<HTMLDivElement>;
   const { data: artists } = useQuery({
     queryKey: ["public-artists-gallery"],
     queryFn: async () => {
@@ -74,13 +76,13 @@ export function Gallery() {
           </span>
         </div>
 
-        <div className="space-y-20 md:space-y-28">
+        <div ref={containerRef} className="space-y-20 md:space-y-28">
           {artists.map((artist) => {
             const thumbs = thumbsByArtist[artist.id] ?? [];
             if (thumbs.length === 0) return null;
 
             return (
-              <div key={artist.id}>
+              <div key={artist.id} className="reveal">
                 <div className="flex items-end justify-between mb-6">
                   <div>
                     <p className="text-[10px] tracking-editorial uppercase text-primary mb-2">

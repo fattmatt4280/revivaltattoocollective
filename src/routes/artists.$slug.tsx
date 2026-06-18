@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Instagram, Facebook, ArrowLeft } from "lucide-react";
+import { Instagram, Facebook, ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TikTokIcon } from "@/components/icons/TikTokIcon";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
@@ -27,10 +28,14 @@ function optimizeUrl(url: string, width: number, quality = 75): string {
     `?width=${width}&quality=${quality}`;
 }
 
+function toTitleCase(s: string) {
+  return s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export const Route = createFileRoute("/artists/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — Revival Tattoo Collective` },
+      { title: `${toTitleCase(params.slug)} — Revival Tattoo Collective` },
       { name: "description", content: "View the full tattoo portfolio from Revival Tattoo Collective." },
     ],
   }),
@@ -39,6 +44,7 @@ export const Route = createFileRoute("/artists/$slug")({
 
 function ArtistPortfolio() {
   const { slug } = Route.useParams();
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const { data: artist, isLoading: artistLoading } = useQuery({
     queryKey: ["public-artist", slug],
@@ -68,6 +74,19 @@ function ArtistPortfolio() {
       return data as GalleryImage[];
     },
   });
+
+  const closeLightbox = useCallback(() => setLightboxIdx(null), []);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") setLightboxIdx((i) => (i !== null && images ? Math.min(i + 1, images.length - 1) : i));
+      if (e.key === "ArrowLeft") setLightboxIdx((i) => (i !== null ? Math.max(i - 1, 0) : i));
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, closeLightbox, images]);
 
   if (artistLoading) {
     return (
@@ -136,9 +155,9 @@ function ArtistPortfolio() {
                   </p>
                 )}
                 <div className="flex flex-wrap gap-x-5 gap-y-2 mb-8">
-                  {(artist.instagram_handles ?? []).map((h) => (
+                  {(artist.instagram_handles ?? []).map((h, i) => (
                     <a
-                      key={h.handle}
+                      key={`${h.handle}-${h.platform ?? i}`}
                       href={h.url}
                       target="_blank"
                       rel="noreferrer"
@@ -156,7 +175,7 @@ function ArtistPortfolio() {
                   ))}
                 </div>
                 <a
-                  href={`/#book?artist=${artist.slug}`}
+                  href={`/#book?artistId=${artist.id}`}
                   className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-bone border border-bone/80 px-5 py-2.5 hover:bg-bone hover:text-ink transition-colors"
                 >
                   Book with {artist.name}
@@ -185,7 +204,8 @@ function ArtistPortfolio() {
                 {images.map((img, idx) => (
                   <figure
                     key={img.id}
-                    className="relative aspect-[3/4] overflow-hidden bg-secondary group"
+                    className="relative aspect-[3/4] overflow-hidden bg-secondary group cursor-zoom-in"
+                    onClick={() => setLightboxIdx(idx)}
                   >
                     <img
                       src={optimizeUrl(img.public_url, 600)}
@@ -207,6 +227,53 @@ function ArtistPortfolio() {
         </section>
       </main>
       <Footer />
+
+      {/* Lightbox */}
+      {lightboxIdx !== null && images && images[lightboxIdx] && (
+        <div
+          className="fixed inset-0 z-[100] bg-ink/95 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          <button
+            onClick={closeLightbox}
+            className="absolute top-5 right-5 text-bone/70 hover:text-bone transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {lightboxIdx > 0 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIdx((i) => (i !== null ? i - 1 : i)); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-bone/70 hover:text-bone transition-colors p-2"
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+          )}
+
+          <img
+            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90)}
+            alt={images[lightboxIdx].alt_text ?? images[lightboxIdx].caption ?? `${artist.name} tattoo`}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {lightboxIdx < images.length - 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIdx((i) => (i !== null ? i + 1 : i)); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-bone/70 hover:text-bone transition-colors p-2"
+              aria-label="Next"
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          )}
+
+          <span className="absolute bottom-5 left-1/2 -translate-x-1/2 text-[10px] tracking-editorial uppercase text-muted-foreground">
+            {lightboxIdx + 1} / {images.length}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
