@@ -67,14 +67,14 @@ function ArtistImageStrip({
               key={img.id}
               to="/artists/$slug"
               params={{ slug: artistSlug }}
-              className="relative overflow-hidden bg-ink border border-border/40 group/thumb block"
+              className="relative aspect-[4/5] overflow-hidden bg-ink border border-border/40 group/thumb block"
             >
               <img
                 src={optimizeUrl(img.public_url, 600)}
                 alt={img.alt_text ?? `${artistName} tattoo work`}
                 loading={priority && i < 2 ? "eager" : "lazy"}
                 fetchPriority={priority && i === 0 ? "high" : "auto"}
-                className="w-full h-auto block transition-transform duration-700 group-hover/thumb:scale-[1.03]"
+                className="absolute inset-0 w-full h-full object-contain transition-transform duration-700 group-hover/thumb:scale-[1.03]"
               />
             </Link>
           );
