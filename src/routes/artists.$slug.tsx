@@ -21,11 +21,14 @@ type GalleryImage = {
   public_url: string;
   alt_text: string | null;
   caption: string | null;
+  updated_at?: string | null;
 };
 
-function optimizeUrl(url: string, width: number, quality = 75): string {
-  return url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
+function optimizeUrl(url: string, width: number, quality = 75, cacheKey?: string | null): string {
+  const base =
+    url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
     `?width=${width}&quality=${quality}`;
+  return cacheKey ? `${base}&v=${encodeURIComponent(cacheKey)}` : base;
 }
 
 function toTitleCase(s: string) {
@@ -66,7 +69,7 @@ function ArtistPortfolio() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("id,public_url,alt_text,caption")
+        .select("id,public_url,alt_text,caption,updated_at")
         .eq("artist_id", artist!.id)
         .eq("visible", true)
         .order("display_order", { ascending: true });
@@ -208,7 +211,7 @@ function ArtistPortfolio() {
                     onClick={() => setLightboxIdx(idx)}
                   >
                     <img
-                      src={optimizeUrl(img.public_url, 600)}
+                      src={optimizeUrl(img.public_url, 600, 75, img.updated_at ?? img.id)}
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
                       loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
@@ -253,7 +256,7 @@ function ArtistPortfolio() {
           )}
 
           <img
-            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90)}
+            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90, images[lightboxIdx].updated_at ?? images[lightboxIdx].id)}
             alt={images[lightboxIdx].alt_text ?? images[lightboxIdx].caption ?? `${artist.name} tattoo`}
             className="max-h-[90vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}

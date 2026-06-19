@@ -16,13 +16,13 @@ export type Artist = {
   accentNumber: string;
 };
 
-type ThumbImage = { id: string; public_url: string; alt_text: string | null; artist_id: string | null };
+type ThumbImage = { id: string; public_url: string; alt_text: string | null; artist_id: string | null; updated_at?: string | null };
 
-function optimizeUrl(url: string, width: number, quality = 80): string {
-  return (
+function optimizeUrl(url: string, width: number, quality = 80, cacheKey?: string | null): string {
+  const base =
     url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
-    `?width=${width}&quality=${quality}`
-  );
+    `?width=${width}&quality=${quality}`;
+  return cacheKey ? `${base}&v=${encodeURIComponent(cacheKey)}` : base;
 }
 
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
@@ -70,7 +70,7 @@ function ArtistImageStrip({
               className="relative aspect-[4/5] overflow-hidden bg-ink border border-border/40 group/thumb block"
             >
               <img
-                src={optimizeUrl(img.public_url, 600)}
+                src={optimizeUrl(img.public_url, 600, 80, img.updated_at ?? img.id)}
                 alt={img.alt_text ?? `${artistName} tattoo work`}
                 loading={priority && i < 2 ? "eager" : "lazy"}
                 fetchPriority={priority && i === 0 ? "high" : "auto"}
@@ -244,7 +244,7 @@ export function Artists() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("id,public_url,alt_text,artist_id,display_order")
+        .select("id,public_url,alt_text,artist_id,display_order,updated_at")
         .in("artist_id", artists!.map((a) => a.id))
         .eq("visible", true)
         .order("display_order", { ascending: true });
