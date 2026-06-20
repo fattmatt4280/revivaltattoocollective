@@ -72,7 +72,7 @@ function GalleryAdmin() {
 
   const renumberByDate = async () => {
     if (!images || images.length === 0) return;
-    let q = supabase.from("gallery_images").select("id").order("created_at", { ascending: true });
+    let q = supabase.from("gallery_images").select("id").order("created_at", { ascending: false });
     if (filterArtist !== "all") q = q.eq("artist_id", filterArtist);
     const { data, error } = await q;
     if (error) return toast.error(error.message);

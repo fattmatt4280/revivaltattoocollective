@@ -14,14 +14,32 @@ export function Hero() {
   const { data: images } = useQuery({
     queryKey: ["hero-gallery-images"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("gallery_images")
-        .select("id,public_url,alt_text")
-        .eq("visible", true)
+      // Fetch active artists first so we can pull one image per artist
+      const { data: artists } = await supabase
+        .from("artists")
+        .select("id")
+        .eq("active", true)
         .order("display_order", { ascending: true })
         .limit(4);
-      if (error) throw error;
-      return (data ?? []) as HeroImage[];
+
+      if (!artists || artists.length === 0) return [];
+
+      // One best image per artist (lowest display_order, then newest)
+      const perArtist = await Promise.all(
+        artists.map(async (a) => {
+          const { data } = await supabase
+            .from("gallery_images")
+            .select("id,public_url,alt_text")
+            .eq("artist_id", a.id)
+            .eq("visible", true)
+            .order("display_order", { ascending: true })
+            .order("created_at", { ascending: false })
+            .limit(1);
+          return data?.[0] ?? null;
+        })
+      );
+
+      return perArtist.filter(Boolean) as HeroImage[];
     },
   });
 
