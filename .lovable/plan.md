@@ -1,34 +1,24 @@
-## Goal
+## Plan: stop portfolio/home images from cropping at the source
 
-Stop cropping portfolio images anywhere on the public site. Every tile uses `object-fit: contain` inside a fixed square frame, with the bare background showing as letterbox/pillarbox bars — matching the admin gallery's tile shape (`aspect-square`).
+The screenshots show the `<img>` elements are using `object-contain`, but the image files requested by the site are still the backend-rendered optimized URLs with only `width=...`. Those rendered versions can be transformed/cropped before the browser ever receives them, so `object-contain` cannot restore the missing side edges.
 
-## Changes
+### What I’ll change
 
-1. **`src/components/site/Artists.tsx`** — home artist strips
-   - Keep the figure square (`paddingBottom: "100%"`).
-   - Change `objectFit: "cover"` → `objectFit: "contain"` on the `<img>`.
-   - Keep the dark `#0a0a0a` background so unused space reads as intentional letterbox.
+1. **Use original uploaded image URLs for display tiles**
+   - Update homepage artist tiles in `src/components/site/Artists.tsx` to use each image’s original `public_url` instead of the optimized render URL.
+   - This matches the admin preview behavior more closely, since the admin card displays `draft.public_url` directly.
 
-2. **`src/components/site/Gallery.tsx`** — home gallery tiles
-   - Keep `aspect-square`.
-   - Image stays `object-contain` (already is); no change needed beyond confirming.
+2. **Use original uploaded image URLs inside artist portfolios**
+   - Update `src/routes/artists.$slug.tsx` so the portfolio grid and lightbox use `public_url` directly.
+   - Keep `object-contain` so images letterbox instead of cropping.
 
-3. **`src/routes/artists.$slug.tsx`** — artist portfolio grid
-   - Keep `aspect-square` on skeleton and tile containers.
-   - Image stays `object-contain` (already is); no change needed beyond confirming.
-   - Lightbox stays `object-contain`.
+3. **Use original image URLs in the gallery section too**
+   - Update `src/components/site/Gallery.tsx` for consistency, including its lightbox.
 
-Net effective change: only `Artists.tsx` flips from `cover` to `contain`. The other two files already use `object-contain` — the reported "edges cut off" on portfolio pages is actually letterbox bars from 4:5 images in square frames, which is the behavior the user is now explicitly asking for (contain + padding). Confirming no code change is needed there is part of the plan so we don't introduce regressions.
+4. **Keep the existing square tile layout**
+   - Do not change ordering, uploads, admin flow, database records, or navigation.
+   - Only change the frontend image source/sizing behavior so no edges are cut off.
 
-## Out of scope
+### Verification
 
-- Changing tile aspect ratio (staying square to match admin).
-- Re-cropping or re-uploading existing images.
-- Upload/crop flow, storage, RLS, lightbox behavior.
-
-## Verification
-
-Reload `/` and `/artists/brady`, `/artists/fattmatt`. Confirm:
-- Home artist strips show full images with thin dark bars on top/bottom for portrait shots (no zoom-in).
-- Portfolio grid tiles show full images, same letterbox treatment.
-- Admin gallery is unchanged.
+After implementation, I’ll check the homepage and `/artists/matt` preview to confirm the tattoo images show full edges with letterboxing rather than side cropping.
