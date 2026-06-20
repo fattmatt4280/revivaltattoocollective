@@ -177,6 +177,13 @@
   .font-body { font-family: var(--font-body); }
   .tracking-editorial { letter-spacing: var(--tracking-editorial); }
   .text-bone { color: var(--bone); }
+  .text-primary {
+    text-shadow:
+      -1px -1px 0 rgba(255, 255, 255, 0.65),
+       1px -1px 0 rgba(255, 255, 255, 0.65),
+      -1px  1px 0 rgba(255, 255, 255, 0.65),
+       1px  1px 0 rgba(255, 255, 255, 0.65);
+  }
   .bg-ink { background-color: var(--ink); }
   .shadow-cinematic { box-shadow: var(--shadow-cinematic); }
   .shadow-accent { box-shadow: var(--shadow-accent); }
