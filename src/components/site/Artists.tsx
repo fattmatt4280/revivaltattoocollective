@@ -196,21 +196,21 @@ function ArtistCard({
         </header>
 
         {/* CTAs */}
-        <div className="col-span-12 md:col-span-7 md:col-start-6 flex flex-wrap items-center gap-4 md:justify-end md:pt-2">
+        <div className="col-span-12 md:col-span-7 md:col-start-6 flex flex-wrap items-center gap-5 md:justify-end md:pt-2">
           <Link
             to="/artists/$slug"
             params={{ slug: artist.slug }}
-            className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase text-muted-foreground border border-border px-6 py-3 hover:border-bone/60 hover:text-bone transition-colors"
+            className="btn-liquid inline-flex items-center gap-4 text-sm tracking-wide uppercase font-medium px-8 py-4 rounded-xl"
           >
             View Full Portfolio
-            <span>→</span>
+            <span className="text-base">→</span>
           </Link>
           <a
             href={`/#book?artistId=${artist.id}`}
-            className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            className="btn-liquid inline-flex items-center gap-4 text-sm tracking-wide uppercase font-medium px-8 py-4 rounded-xl"
           >
             Book {artist.name}
-            <span className="w-4 h-px bg-current" />
+            <span className="w-5 h-px bg-current" />
           </a>
         </div>
       </div>
