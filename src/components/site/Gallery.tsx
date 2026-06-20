@@ -142,7 +142,7 @@ export function Gallery() {
                           src={optimizeUrl(img.public_url, 600, 80, img.updated_at ?? img.id)}
                           alt={img.alt_text ?? `${artist.name} tattoo`}
                           loading={idx < 3 ? "eager" : "lazy"}
-                          className="absolute inset-0 w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.03]"
+                          className="absolute inset-0 w-full h-full object-contain block"
                         />
                         {/* Gallery number overlay on hover */}
                         <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors duration-400 flex items-end justify-end p-3">

@@ -215,7 +215,7 @@ function ArtistPortfolio() {
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
                       loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
-                      className="absolute inset-0 w-full h-full object-cover block transition-transform duration-700 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-contain block"
                     />
                     {img.caption && (
                       <figcaption className="absolute inset-x-0 bottom-0 bg-ink/80 px-3 py-2 text-[10px] tracking-editorial uppercase text-bone/80 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
