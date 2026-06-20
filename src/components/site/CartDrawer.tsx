@@ -41,9 +41,9 @@ export function CartDrawer() {
       <SheetTrigger asChild>
         <button
           aria-label="Open cart"
-          className="relative w-9 h-9 flex items-center justify-center text-bone hover:text-primary transition-colors"
+          className="relative w-10 h-10 flex items-center justify-center text-bone hover:text-primary transition-colors"
         >
-          <ShoppingBag className="h-5 w-5" />
+          <ShoppingBag className="h-7 w-7" />
           {totalItems > 0 && (
             <Badge className="absolute -top-1 -right-1 h-4 min-w-4 rounded-full p-0 px-1 flex items-center justify-center text-[10px] bg-primary text-primary-foreground border-0">
               {totalItems}

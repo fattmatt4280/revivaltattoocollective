@@ -17,10 +17,10 @@ export function Nav() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/60 border-b border-border/40">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-10 h-16 flex items-center justify-between">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-10 h-24 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
             <span className="w-2 h-2 rounded-full bg-primary shadow-accent group-hover:scale-125 transition-transform" />
-            <span className="font-display text-base tracking-[0.22em] uppercase text-bone">
+            <span className="font-display text-2xl tracking-[0.22em] uppercase text-bone">
               Revival
             </span>
           </Link>
@@ -68,7 +68,7 @@ export function Nav() {
               className="md:hidden flex items-center justify-center w-9 h-9 text-bone"
               aria-label="Toggle menu"
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>

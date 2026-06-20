@@ -52,11 +52,10 @@ export function Hero() {
       {/* Top label bar */}
       <div className="absolute top-24 left-0 right-0 z-10 px-6 md:px-10">
         <div className="mx-auto max-w-[1600px] flex items-center justify-between text-[10px] tracking-editorial uppercase text-muted-foreground">
-          <span>Largo, FL — Est. Collective</span>
+          <span>Largo, FL</span>
           <span className="hidden md:inline">
             Tattoo · Sign Painting · Lettering · Color Realism
           </span>
-          <span>N° 001</span>
         </div>
       </div>
 
