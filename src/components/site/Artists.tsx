@@ -71,7 +71,7 @@ function ArtistImageStrip({
             >
               <figure style={{ position: "relative", width: "100%", paddingBottom: "100%", overflow: "hidden", background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.1)", margin: 0 }}>
                 <img
-                  src={optimizeUrl(img.public_url, 600)}
+                  src={img.public_url}
                   alt={img.alt_text ?? `${artistName} tattoo work`}
                   loading={priority && i < 2 ? "eager" : "lazy"}
                   fetchPriority={priority && i === 0 ? "high" : "auto"}

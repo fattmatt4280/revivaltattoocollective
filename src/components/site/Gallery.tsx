@@ -130,7 +130,7 @@ export function Gallery() {
                         key={img.id}
                         onClick={() =>
                           setLightbox({
-                            url: optimizeUrl(img.public_url, 1400, 80, img.updated_at ?? img.id),
+                            url: img.public_url,
                             alt: img.alt_text ?? `${artist.name} tattoo`,
                             artist: artist.name,
                           })
@@ -139,7 +139,7 @@ export function Gallery() {
                         aria-label={`View ${img.alt_text ?? artist.name + " tattoo"} in full size`}
                       >
                         <img
-                          src={optimizeUrl(img.public_url, 600, 80, img.updated_at ?? img.id)}
+                          src={img.public_url}
                           alt={img.alt_text ?? `${artist.name} tattoo`}
                           loading={idx < 3 ? "eager" : "lazy"}
                           className="absolute inset-0 w-full h-full object-contain block"

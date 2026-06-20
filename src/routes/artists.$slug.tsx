@@ -211,7 +211,7 @@ function ArtistPortfolio() {
                     onClick={() => setLightboxIdx(idx)}
                   >
                     <img
-                      src={optimizeUrl(img.public_url, 600, 75, img.updated_at ?? img.id)}
+                      src={img.public_url}
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
                       loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
@@ -256,7 +256,7 @@ function ArtistPortfolio() {
           )}
 
           <img
-            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90, images[lightboxIdx].updated_at ?? images[lightboxIdx].id)}
+            src={images[lightboxIdx].public_url}
             alt={images[lightboxIdx].alt_text ?? images[lightboxIdx].caption ?? `${artist.name} tattoo`}
             className="max-h-[90vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}
