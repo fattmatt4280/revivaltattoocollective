@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth";
 
 const links = [
   { label: "Artists", hash: "artists" },
-  { label: "Gallery", hash: "gallery" },
   { label: "About", hash: "about" },
   { label: "Contact", hash: "contact" },
 ];
