@@ -70,7 +70,7 @@
   --card-foreground: oklch(0.94 0.008 80);
   --popover: oklch(0.16 0.006 20);
   --popover-foreground: oklch(0.94 0.008 80);
-  --primary: oklch(0.42 0.18 25);
+  --primary: oklch(0.70 0.008 60);
   --primary-foreground: oklch(0.96 0.01 80);
   --primary-glow: oklch(0.52 0.21 26);
   --secondary: oklch(0.2 0.006 20);
@@ -177,13 +177,6 @@
   .font-body { font-family: var(--font-body); }
   .tracking-editorial { letter-spacing: var(--tracking-editorial); }
   .text-bone { color: var(--bone); }
-  .text-primary {
-    text-shadow:
-      -1px -1px 0 rgba(255, 255, 255, 0.65),
-       1px -1px 0 rgba(255, 255, 255, 0.65),
-      -1px  1px 0 rgba(255, 255, 255, 0.65),
-       1px  1px 0 rgba(255, 255, 255, 0.65);
-  }
   .bg-ink { background-color: var(--ink); }
   .shadow-cinematic { box-shadow: var(--shadow-cinematic); }
   .shadow-accent { box-shadow: var(--shadow-accent); }

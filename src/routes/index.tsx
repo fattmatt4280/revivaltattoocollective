@@ -14,20 +14,20 @@ import { InstagramSection } from "@/components/site/InstagramSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Revival Tattoo Collective — Editorial Tattoo Studio in Largo, FL" },
+      { title: "Revival Tattoo Collective — Custom Award-Winning Tattoo Studio in Largo, FL" },
       {
         name: "description",
         content:
-          "Revival Tattoo Collective is a gallery-forward tattoo studio in Largo, FL specializing in color realism, surrealism, traditional, and lettering work.",
+          "Largo, FL's award-winning custom tattoo studio. Specializing in color realism, traditional, lettering, and sign painting. Walk-ins welcome — appointments recommended.",
       },
       {
         property: "og:title",
-        content: "Revival Tattoo Collective — Editorial Tattoo Studio in Largo, FL",
+        content: "Revival Tattoo Collective — Custom Award-Winning Tattoo Studio in Largo, FL",
       },
       {
         property: "og:description",
         content:
-          "Color realism, surrealism, traditional, and lettering tattoos from a Largo, FL collective.",
+          "Largo, FL's award-winning custom tattoo studio. Specializing in color realism, traditional, lettering, and sign painting. Walk-ins welcome — appointments recommended.",
       },
       { property: "og:url", content: "https://revivaltattoocollective.com/" },
     ],

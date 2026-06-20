@@ -82,9 +82,9 @@ export function Hero() {
               className="mt-8 text-base text-muted-foreground leading-relaxed animate-fade-up max-w-sm"
               style={{ animationDelay: "0.2s" }}
             >
-              Expert tattoo and sign painting in Largo, Florida. A
-              gallery-forward studio where editorial restraint meets the
-              physicality of the needle.
+              Award-winning custom tattoo and sign painting in Largo,
+              Florida. Built on craft, collaboration, and work that lasts
+              a lifetime.
             </p>
 
             <div
