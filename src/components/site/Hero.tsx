@@ -52,7 +52,7 @@ export function Hero() {
       {/* Top label bar */}
       <div className="absolute top-24 left-0 right-0 z-10 px-6 md:px-10">
         <div className="mx-auto max-w-[1600px] flex items-center justify-between text-[10px] tracking-editorial uppercase text-muted-foreground">
-          <span>Clearwater, FL — Est. Collective</span>
+          <span>Largo, FL — Est. Collective</span>
           <span className="hidden md:inline">
             Tattoo · Sign Painting · Lettering · Color Realism
           </span>
@@ -82,7 +82,7 @@ export function Hero() {
               className="mt-8 text-base text-muted-foreground leading-relaxed animate-fade-up max-w-sm"
               style={{ animationDelay: "0.2s" }}
             >
-              Expert tattoo and sign painting in Clearwater, Florida. A
+              Expert tattoo and sign painting in Largo, Florida. A
               gallery-forward studio where editorial restraint meets the
               physicality of the needle.
             </p>

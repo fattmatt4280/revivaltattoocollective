@@ -19,9 +19,9 @@ export function About() {
 
           <div className="md:col-span-6 md:col-start-7 space-y-6 text-base text-muted-foreground leading-relaxed reveal">
             <p>
-              Revival Tattoo Collective sits just minutes from Clearwater
-              Beach — the home shop for some of the most knowledgeable
-              tattoo artists in Florida. Full-time residents and rotating
+              Revival Tattoo Collective is located in Largo, Florida —
+              the home shop for some of the most knowledgeable
+              tattoo artists in the state. Full-time residents and rotating
               guest artists, all with years behind the machine.
             </p>
             <p>

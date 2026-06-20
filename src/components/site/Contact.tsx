@@ -44,7 +44,7 @@ export function Contact() {
           <div className="md:col-span-6 md:col-start-7">
             <div className="relative aspect-[4/5] md:aspect-[4/5] border border-border overflow-hidden bg-secondary">
               <iframe
-                title="Revival Tattoo Collective — Clearwater, FL"
+                title="Revival Tattoo Collective — Largo, FL"
                 src="https://www.google.com/maps?q=519+Highland+Ave+N+Suite+A+Largo+FL+33770&output=embed"
                 className="w-full h-full grayscale contrast-125 opacity-80 hover:opacity-100 transition-opacity"
                 loading="lazy"
