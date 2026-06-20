@@ -75,7 +75,7 @@ function ArtistImageStrip({
                   alt={img.alt_text ?? `${artistName} tattoo work`}
                   loading={priority && i < 2 ? "eager" : "lazy"}
                   fetchPriority={priority && i === 0 ? "high" : "auto"}
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", display: "block" }}
                 />
               </figure>
             </Link>
