@@ -26,8 +26,7 @@ export function Footer() {
             <p className="text-[10px] tracking-editorial uppercase text-primary mb-4">Follow</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="https://instagram.com/shyftd.ink" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@shyftd.ink</a></li>
-              <li><a href="https://instagram.com/inkbyashlyn" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@inkbyashlyn</a></li>
-              <li><a href="https://instagram.com/revivalletters" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@revivalletters</a></li>
+<li><a href="https://instagram.com/revivalletters" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@revivalletters</a></li>
               <li><a href="https://facebook.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">Facebook</a></li>
               <li><a href="https://tiktok.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">TikTok</a></li>
             </ul>
@@ -37,8 +36,7 @@ export function Footer() {
             <p className="text-[10px] tracking-editorial uppercase text-primary mb-4">Site</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="/#artists" className="hover:text-bone transition-colors">Artists</a></li>
-              <li><a href="/#gallery" className="hover:text-bone transition-colors">Gallery</a></li>
-              <li><a href="/#book" className="hover:text-bone transition-colors">Book</a></li>
+<li><a href="/#book" className="hover:text-bone transition-colors">Book</a></li>
             </ul>
           </div>
         </div>

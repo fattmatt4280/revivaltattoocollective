@@ -142,8 +142,6 @@ export function Hero() {
               <span className="text-primary">◆</span>
               <span>Color Realism — Matt</span>
               <span className="text-primary">◆</span>
-              <span>Traditional — Ashlyn</span>
-              <span className="text-primary">◆</span>
               <span>Lettering — Brady</span>
               <span className="text-primary">◆</span>
               <span>Revival Tattoo Collective</span>
