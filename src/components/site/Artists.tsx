@@ -28,7 +28,7 @@ function optimizeUrl(url: string, width: number, quality = 80): string {
 function ThumbPlaceholder({ name, idx }: { name: string; idx: number }) {
   return (
     <div
-      className="relative aspect-[4/5] overflow-hidden border border-border/60 group/thumb"
+      className="relative w-full pb-[100%] overflow-hidden border border-border/60 group/thumb"
       style={{
         background:
           "linear-gradient(135deg, oklch(0.18 0.006 20) 0%, oklch(0.13 0.005 20) 100%)",
@@ -67,15 +67,17 @@ function ArtistImageStrip({
               key={img.id}
               to="/artists/$slug"
               params={{ slug: artistSlug }}
-              className="relative overflow-hidden bg-ink border border-border/40 group/thumb block"
+              style={{ display: "block" }}
             >
-              <img
-                src={optimizeUrl(img.public_url, 600)}
-                alt={img.alt_text ?? `${artistName} tattoo work`}
-                loading={priority && i < 2 ? "eager" : "lazy"}
-                fetchPriority={priority && i === 0 ? "high" : "auto"}
-                className="w-full h-auto block transition-transform duration-700 group-hover/thumb:scale-[1.03]"
-              />
+              <figure style={{ position: "relative", width: "100%", paddingBottom: "100%", overflow: "hidden", background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.1)", margin: 0 }}>
+                <img
+                  src={optimizeUrl(img.public_url, 600)}
+                  alt={img.alt_text ?? `${artistName} tattoo work`}
+                  loading={priority && i < 2 ? "eager" : "lazy"}
+                  fetchPriority={priority && i === 0 ? "high" : "auto"}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              </figure>
             </Link>
           );
         }
@@ -244,10 +246,11 @@ export function Artists() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("id,public_url,alt_text,artist_id,display_order")
+        .select("id,public_url,alt_text,artist_id,display_order,created_at")
         .in("artist_id", artists!.map((a) => a.id))
         .eq("visible", true)
-        .order("display_order", { ascending: true });
+        .order("display_order", { ascending: true })
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as ThumbImage[];
     },

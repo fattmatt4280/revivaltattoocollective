@@ -19,7 +19,7 @@ export function Hero() {
         .select("id,public_url,alt_text")
         .eq("visible", true)
         .order("display_order", { ascending: true })
-        .limit(8);
+        .limit(4);
       if (error) throw error;
       return (data ?? []) as HeroImage[];
     },
@@ -90,21 +90,21 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Right — masonry columns, images at natural aspect ratio */}
-        <div className="hidden lg:block overflow-hidden pt-20 pb-16 px-4 pl-2">
-          <div className="columns-2 gap-2">
-            {imgs.map((img, i) => (
+        {/* Right — 2×2 square grid */}
+        <div className="hidden lg:flex items-center justify-center px-4 pl-2 overflow-hidden h-full">
+          <div className="grid grid-cols-2 gap-2 w-full max-w-xl">
+            {imgs.slice(0, 4).map((img, i) => (
               <a
                 key={img.id}
                 href="#gallery"
-                className="block mb-2 overflow-hidden group break-inside-avoid"
+                className="relative block aspect-square overflow-hidden rounded-xl"
               >
                 <img
-                  src={optimizeUrl(img.public_url, 700)}
+                  src={optimizeUrl(img.public_url, 600)}
                   alt={img.alt_text ?? "Revival Tattoo Collective"}
                   loading={i < 2 ? "eager" : "lazy"}
                   fetchPriority={i === 0 ? "high" : "auto"}
-                  className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="absolute inset-0 w-full h-full object-cover block"
                 />
               </a>
             ))}

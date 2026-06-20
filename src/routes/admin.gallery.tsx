@@ -68,6 +68,21 @@ function GalleryAdmin() {
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-gallery"] });
 
+  const renumberByDate = async () => {
+    if (!images || images.length === 0) return;
+    // Fetch the same set ordered by created_at, then assign 1-N
+    let q = supabase.from("gallery_images").select("id").order("created_at", { ascending: true });
+    if (filterArtist !== "all") q = q.eq("artist_id", filterArtist);
+    const { data, error } = await q;
+    if (error) return toast.error(error.message);
+    const updates = (data ?? []).map((row, i) =>
+      supabase.from("gallery_images").update({ display_order: i + 1 }).eq("id", row.id)
+    );
+    await Promise.all(updates);
+    toast.success(`Renumbered ${updates.length} images`);
+    refresh();
+  };
+
   const onUpload = async (files: FileList) => {
     setUploading(true);
     try {
@@ -146,7 +161,14 @@ function GalleryAdmin() {
           </Select>
         </div>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          <Button
+            onClick={renumberByDate}
+            variant="outline"
+            className="rounded-none border-border tracking-editorial uppercase text-[11px] text-muted-foreground hover:text-bone"
+          >
+            Renumber by date
+          </Button>
           <input
             ref={fileRef}
             type="file"

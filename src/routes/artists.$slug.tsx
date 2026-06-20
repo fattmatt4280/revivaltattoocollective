@@ -200,19 +200,19 @@ function ArtistPortfolio() {
                 No portfolio images yet — check back soon.
               </p>
             ) : (
-              <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                 {images.map((img, idx) => (
                   <figure
                     key={img.id}
-                    className="relative overflow-hidden bg-ink group cursor-zoom-in mb-3 md:mb-4 break-inside-avoid"
+                    className="aspect-square overflow-hidden rounded-xl bg-ink group cursor-zoom-in"
                     onClick={() => setLightboxIdx(idx)}
                   >
                     <img
-                      src={optimizeUrl(img.public_url, 600)}
+                      src={img.public_url}
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
                       loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
-                      className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover block"
                     />
                     {img.caption && (
                       <figcaption className="absolute inset-x-0 bottom-0 bg-ink/80 px-3 py-2 text-[10px] tracking-editorial uppercase text-bone/80 translate-y-full group-hover:translate-y-0 transition-transform duration-300">

@@ -122,8 +122,8 @@ export function Gallery() {
                     </div>
                   </div>
 
-                  {/* Gallery grid — masonry columns */}
-                  <div className="columns-2 md:columns-3 lg:columns-4 gap-2 md:gap-3">
+                  {/* Gallery grid — uniform cells, full image visible */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                     {thumbs.map((img, idx) => (
                       <button
                         key={img.id}
@@ -134,14 +134,14 @@ export function Gallery() {
                             artist: artist.name,
                           })
                         }
-                        className="relative overflow-hidden bg-ink group block mb-2 md:mb-3 break-inside-avoid w-full text-left"
+                        className="aspect-square bg-ink group w-full text-left overflow-hidden rounded-xl"
                         aria-label={`View ${img.alt_text ?? artist.name + " tattoo"} in full size`}
                       >
                         <img
                           src={optimizeUrl(img.public_url, 600)}
                           alt={img.alt_text ?? `${artist.name} tattoo`}
                           loading={idx < 3 ? "eager" : "lazy"}
-                          className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03]"
+                          className="w-full h-full object-cover block"
                         />
                         {/* Gallery number overlay on hover */}
                         <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors duration-400 flex items-end justify-end p-3">
