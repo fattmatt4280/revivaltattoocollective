@@ -17,7 +17,7 @@ export function ConsultationCTA({
         </div>
         <a
           href="/#book"
-          className="btn-shimmer shrink-0 inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+          className="btn-liquid shrink-0 inline-flex items-center gap-4 px-8 py-4 text-sm tracking-wide uppercase font-medium rounded-xl"
         >
           Reserve a Session
           <span className="w-6 h-px bg-current" />

@@ -93,16 +93,17 @@ export function Hero() {
             >
               <a
                 href="/#book"
-                className="btn-shimmer group inline-flex items-center gap-4 px-8 py-4 bg-bone text-ink text-[11px] tracking-editorial uppercase font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="btn-liquid inline-flex items-center gap-4 px-8 py-4 text-sm tracking-wide uppercase font-medium rounded-xl"
               >
                 Reserve a Session
-                <span className="w-6 h-px bg-current transition-all group-hover:w-10" />
+                <span className="w-6 h-px bg-current" />
               </a>
               <a
                 href="#artists"
-                className="text-[11px] tracking-editorial uppercase text-muted-foreground hover:text-bone transition-colors"
+                className="btn-liquid inline-flex items-center gap-3 px-8 py-4 text-sm tracking-wide uppercase font-medium rounded-xl"
               >
-                Browse the Work →
+                Browse the Work
+                <span className="text-base">→</span>
               </a>
             </div>
           </div>

@@ -37,7 +37,7 @@ export function About() {
             <div className="pt-4">
               <a
                 href="/#book"
-                className="inline-flex items-center gap-4 text-[11px] tracking-editorial uppercase px-8 py-4 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+                className="btn-liquid inline-flex items-center gap-4 px-8 py-4 text-sm tracking-wide uppercase font-medium rounded-xl"
               >
                 Start the Conversation
                 <span className="w-5 h-px bg-current" />

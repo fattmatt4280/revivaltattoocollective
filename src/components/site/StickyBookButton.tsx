@@ -24,7 +24,7 @@ export function StickyBookButton() {
     <a
       href="/#book"
       aria-label="Book a session"
-      className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-3 px-6 py-3.5 bg-primary text-primary-foreground text-[11px] tracking-editorial uppercase font-medium shadow-accent transition-all duration-300 ${
+      className={`btn-liquid fixed bottom-6 right-6 z-50 inline-flex items-center gap-3 px-6 py-3.5 text-sm tracking-wide uppercase font-medium rounded-xl transition-all duration-300 ${
         visible
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 translate-y-3 pointer-events-none"
