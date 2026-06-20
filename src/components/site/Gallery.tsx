@@ -6,11 +6,11 @@ import { useRevealChildren } from "@/hooks/useReveal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 
-function optimizeUrl(url: string, width: number, quality = 80): string {
-  return (
+function optimizeUrl(url: string, width: number, quality = 80, cacheKey?: string | null): string {
+  const base =
     url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
-    `?width=${width}&quality=${quality}`
-  );
+    `?width=${width}&quality=${quality}`;
+  return cacheKey ? `${base}&v=${encodeURIComponent(cacheKey)}` : base;
 }
 
 type ArtistPreview = {
@@ -25,6 +25,7 @@ type ThumbImage = {
   public_url: string;
   alt_text: string | null;
   artist_id: string | null;
+  updated_at?: string | null;
 };
 
 type Lightbox = { url: string; alt: string; artist: string };
@@ -52,7 +53,7 @@ export function Gallery() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("id,public_url,alt_text,artist_id,display_order")
+        .select("id,public_url,alt_text,artist_id,display_order,updated_at")
         .in("artist_id", artists!.map((a) => a.id))
         .eq("visible", true)
         .order("display_order", { ascending: true });
@@ -122,26 +123,26 @@ export function Gallery() {
                     </div>
                   </div>
 
-                  {/* Gallery grid — uniform cells, full image visible */}
+                  {/* Gallery grid — uniform square cells */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                     {thumbs.map((img, idx) => (
                       <button
                         key={img.id}
                         onClick={() =>
                           setLightbox({
-                            url: optimizeUrl(img.public_url, 1400),
+                            url: optimizeUrl(img.public_url, 1400, 80, img.updated_at ?? img.id),
                             alt: img.alt_text ?? `${artist.name} tattoo`,
                             artist: artist.name,
                           })
                         }
-                        className="aspect-square bg-ink group w-full text-left overflow-hidden rounded-xl"
+                        className="relative aspect-square bg-ink group w-full text-left overflow-hidden rounded-xl"
                         aria-label={`View ${img.alt_text ?? artist.name + " tattoo"} in full size`}
                       >
                         <img
-                          src={optimizeUrl(img.public_url, 600)}
+                          src={optimizeUrl(img.public_url, 600, 80, img.updated_at ?? img.id)}
                           alt={img.alt_text ?? `${artist.name} tattoo`}
                           loading={idx < 3 ? "eager" : "lazy"}
-                          className="w-full h-full object-cover block"
+                          className="absolute inset-0 w-full h-full object-cover block transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                         {/* Gallery number overlay on hover */}
                         <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink/40 transition-colors duration-400 flex items-end justify-end p-3">

@@ -21,11 +21,14 @@ type GalleryImage = {
   public_url: string;
   alt_text: string | null;
   caption: string | null;
+  updated_at?: string | null;
 };
 
-function optimizeUrl(url: string, width: number, quality = 75): string {
-  return url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
+function optimizeUrl(url: string, width: number, quality = 75, cacheKey?: string | null): string {
+  const base =
+    url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/") +
     `?width=${width}&quality=${quality}`;
+  return cacheKey ? `${base}&v=${encodeURIComponent(cacheKey)}` : base;
 }
 
 function toTitleCase(s: string) {
@@ -66,7 +69,7 @@ function ArtistPortfolio() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("id,public_url,alt_text,caption")
+        .select("id,public_url,alt_text,caption,updated_at")
         .eq("artist_id", artist!.id)
         .eq("visible", true)
         .order("display_order", { ascending: true });
@@ -204,15 +207,15 @@ function ArtistPortfolio() {
                 {images.map((img, idx) => (
                   <figure
                     key={img.id}
-                    className="aspect-square overflow-hidden rounded-xl bg-ink group cursor-zoom-in"
+                    className="relative aspect-square overflow-hidden rounded-xl bg-ink group cursor-zoom-in"
                     onClick={() => setLightboxIdx(idx)}
                   >
                     <img
-                      src={img.public_url}
+                      src={optimizeUrl(img.public_url, 600, 75, img.updated_at ?? img.id)}
                       alt={img.alt_text ?? img.caption ?? `${artist.name} tattoo`}
                       loading="eager"
                       fetchPriority={idx === 0 ? "high" : "auto"}
-                      className="w-full h-full object-cover block"
+                      className="absolute inset-0 w-full h-full object-cover block transition-transform duration-700 group-hover:scale-105"
                     />
                     {img.caption && (
                       <figcaption className="absolute inset-x-0 bottom-0 bg-ink/80 px-3 py-2 text-[10px] tracking-editorial uppercase text-bone/80 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -253,7 +256,7 @@ function ArtistPortfolio() {
           )}
 
           <img
-            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90)}
+            src={optimizeUrl(images[lightboxIdx].public_url, 1400, 90, images[lightboxIdx].updated_at ?? images[lightboxIdx].id)}
             alt={images[lightboxIdx].alt_text ?? images[lightboxIdx].caption ?? `${artist.name} tattoo`}
             className="max-h-[90vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}

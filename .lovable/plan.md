@@ -1,37 +1,39 @@
-## What broke
+## Goal
+When uploading portfolio images in `/admin/gallery`, open an in-browser crop dialog so every uploaded file is forced to a 4:5 portrait crop before it hits storage.
 
-The recent "security hardening" migration revoked `EXECUTE` on `public.has_role(uuid, app_role)` from `authenticated`. But every admin RLS policy on `artists`, `gallery_images`, `bookings`, `orders`, `site_settings`, and `user_roles` calls `has_role(auth.uid(), 'admin')` inside its `USING` clause. When the policy tries to evaluate that function as the `authenticated` role, Postgres returns:
+## UX flow
+1. Admin clicks **Upload images** and picks 1+ files (current behavior).
+2. Instead of uploading immediately, a modal opens showing the **first file** with a 4:5 crop overlay.
+3. Admin drags/resizes the crop box (aspect locked to 4:5) and clicks **Crop & continue**.
+4. The cropped file is queued; the modal advances to the next file. Repeat until all done.
+5. Once all files are cropped, the existing upload loop runs — uploading the cropped Blobs to the `revival` bucket and inserting `gallery_images` rows. Toast + refresh as today.
+6. **Cancel** closes the modal and discards the queue (nothing uploaded).
 
-```
-42501: permission denied for function has_role
-```
+## Implementation
 
-The browser network log on `/rest/v1/user_roles?...role=eq.admin` shows exactly this 403. So:
+**Library:** add `react-image-crop` (lightweight, no canvas deps, pairs with a small `<canvas>` to produce the output Blob). Install via `bun add react-image-crop`.
 
-- The auth layer thinks you're signed in (you are).
-- Every admin check silently fails → you appear as a non-admin.
-- Bios, photos, Brady's last name, etc. aren't deleted — they're just invisible because the `SELECT` policies that admins rely on can't run. Same reason your edits "reverted": admin `UPDATE`s have been failing for a while.
+**New component:** `src/components/admin/CropDialog.tsx`
+- Props: `files: File[]`, `onComplete: (cropped: File[]) => void`, `onCancel: () => void`.
+- Internal state: current index, current `Crop` (aspect locked to 4/5), `HTMLImageElement` ref.
+- Uses shadcn `Dialog` for the shell (matches existing admin style).
+- Default crop = largest centered 4:5 box for the source dimensions.
+- On **Crop & continue**: draw the selected pixel region to an offscreen canvas at the source's native resolution (preserve quality), export via `canvas.toBlob(..., file.type, 0.95)`, wrap in a new `File` keeping the original name, push to results, advance index. On last file → `onComplete(results)`.
+- Output sizing: keep native pixels of the crop region (no downscale) so Supabase's existing `?width=600` transform still has full-res source to render thumbs and lightbox cleanly.
 
-## Fix
-
-One small migration that restores execute rights on the three security-definer functions to the roles that legitimately need to call them through RLS / triggers:
-
-```sql
-GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, anon;
--- handle_new_user runs as an auth trigger, owned/executed by the trigger context;
--- update_updated_at_column runs as a row trigger. Restore default execute to be safe:
-GRANT EXECUTE ON FUNCTION public.handle_new_user() TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.update_updated_at_column() TO authenticated, service_role;
-```
-
-`has_role` is `SECURITY DEFINER` with a locked `search_path` — granting EXECUTE on it is the standard, correct pattern (this is the exact shape recommended in the user-roles guide). Revoking it was the mistake.
-
-## Verification steps after applying
-
-1. Query `public.artists` and `public.gallery_images` directly with service role to confirm the prior edits, bios, and uploaded images are still present in the DB (they should be — nothing was deleted).
-2. Reload `/admin` — admin gate should pass, bios + photos should reappear.
-3. Update `@security-memory` to record: do NOT revoke EXECUTE on `has_role` from `authenticated`; RLS depends on it.
+**Edit `src/routes/admin.gallery.tsx`:**
+- Add `pendingFiles: File[] | null` state.
+- Change `onUpload` (file input `onChange`) to just set `pendingFiles` from the FileList instead of uploading directly.
+- Render `<CropDialog>` when `pendingFiles` is non-null.
+- Move the existing storage upload + DB insert loop into a new `uploadCropped(files: File[])` function, called from `onComplete`. Same session/role guard, same insert payload, same toast/refresh. Same `revival` bucket, same `gallery/<uuid>.<ext>` paths.
+- `onCancel` resets `pendingFiles` and clears the file input.
 
 ## Out of scope
+- Re-cropping images already in the gallery (would need a separate "Edit crop" action; not requested).
+- Changing storage layout, RLS, or the public display code — the gallery already renders 4:5 with `object-contain`, so cropped uploads will fill the tile edge-to-edge with no letterbox.
+- Server-side validation that the upload is actually 4:5 (client crop is sufficient for an admin-only tool).
 
-No app code changes. No data restores needed (data wasn't lost). Just the GRANT migration + memory update.
+## Verification
+- Upload a tall portrait, a square, and a landscape image. Confirm the crop modal opens for each, aspect is locked to 4:5, and after cropping the resulting tile on `/` and `/artists/<slug>` fills the 4:5 frame with no letterbox bars.
+- Confirm Cancel uploads nothing and leaves the input ready for another pick.
+- Confirm existing session/role guard still fires (sign-out → upload → toast).

@@ -12,6 +12,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Upload, Trash2 } from "lucide-react";
+import { CropDialog } from "@/components/admin/CropDialog";
 
 const STYLES = [
   { value: "color_realism", label: "Color Realism" },
@@ -45,6 +46,7 @@ function GalleryAdmin() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [filterArtist, setFilterArtist] = useState<string>("all");
+  const [pendingFiles, setPendingFiles] = useState<File[] | null>(null);
 
   const { data: artists } = useQuery({
     queryKey: ["all-artists"],
@@ -70,7 +72,6 @@ function GalleryAdmin() {
 
   const renumberByDate = async () => {
     if (!images || images.length === 0) return;
-    // Fetch the same set ordered by created_at, then assign 1-N
     let q = supabase.from("gallery_images").select("id").order("created_at", { ascending: true });
     if (filterArtist !== "all") q = q.eq("artist_id", filterArtist);
     const { data, error } = await q;
@@ -83,7 +84,20 @@ function GalleryAdmin() {
     refresh();
   };
 
-  const onUpload = async (files: FileList) => {
+  const resetInput = () => {
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const onPick = (files: FileList) => {
+    const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (arr.length === 0) {
+      resetInput();
+      return;
+    }
+    setPendingFiles(arr);
+  };
+
+  const uploadCropped = async (files: File[]) => {
     setUploading(true);
     try {
       // Verify a live admin session BEFORE touching storage so we surface
@@ -109,7 +123,7 @@ function GalleryAdmin() {
         return;
       }
 
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const ext = file.name.split(".").pop() || "jpg";
         const path = `gallery/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("revival").upload(path, file, {
@@ -139,7 +153,7 @@ function GalleryAdmin() {
       toast.error(e instanceof Error ? e.message : "Upload failed");
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
+      resetInput();
     }
   };
 
@@ -175,7 +189,7 @@ function GalleryAdmin() {
             multiple
             accept="image/*"
             className="hidden"
-            onChange={(e) => e.target.files && onUpload(e.target.files)}
+            onChange={(e) => e.target.files && onPick(e.target.files)}
           />
           <Button
             onClick={() => fileRef.current?.click()}
@@ -187,6 +201,20 @@ function GalleryAdmin() {
           </Button>
         </div>
       </div>
+
+      {pendingFiles && (
+        <CropDialog
+          files={pendingFiles}
+          onCancel={() => {
+            setPendingFiles(null);
+            resetInput();
+          }}
+          onComplete={async (cropped) => {
+            setPendingFiles(null);
+            await uploadCropped(cropped);
+          }}
+        />
+      )}
 
       {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
 
