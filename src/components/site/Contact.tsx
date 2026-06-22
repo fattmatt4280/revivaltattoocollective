@@ -45,7 +45,7 @@ export function Contact() {
             <div className="relative aspect-[4/5] md:aspect-[4/5] border border-border overflow-hidden bg-secondary">
               <iframe
                 title="Revival Tattoo Collective — Largo, FL"
-                src="https://www.google.com/maps?q=519+Highland+Ave+N+Suite+A+Largo+FL+33770&output=embed"
+                src="https://maps.google.com/maps?q=27.921864,-82.7752343&z=17&output=embed"
                 className="w-full h-full grayscale contrast-125 opacity-80 hover:opacity-100 transition-opacity"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
