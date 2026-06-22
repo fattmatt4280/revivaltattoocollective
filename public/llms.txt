@@ -1,8 +1,31 @@
 # Revival Tattoo Collective
 
-> Editorial tattoo studio in Largo, FL specializing in color realism, surrealism, American traditional, lettering, and sign painting.
+> Custom award-winning tattoo studio in Largo, Florida. Specializing in color realism, surrealism, lettering, and sign painting.
+
+## About
+
+Revival Tattoo Collective is an award-winning custom tattoo studio located at 519 Highland Ave N, Suite A, Largo, FL 33770. The studio is home to a collective of artists known for bold, lasting work across multiple styles. Walk-ins welcome — appointments recommended.
+
+- Phone: (727) 600-8001
+- Email: revivaltattoocollective@gmail.com
+- Website: https://revivaltattoocollective.com
+- Hours: Tuesday–Saturday, 11 AM – 8 PM
+
+## Artists
+
+- [FattMatt](/artists/matt): Award-winning color realism and surrealism. Bold, saturated, dream-state portraits and surreal compositions.
+- [Brady Martinson](/artists/brady): Founder of Revival. Lettering, sign painting, blackletter, and custom typography on skin.
+
+## Services
+
+- Custom tattoos (color realism, surrealism, traditional, lettering, sign painting)
+- Walk-in tattoos
+- Consultations
+- Merch: signed prints and limited drops
 
 ## Pages
 
-- [Home](/): Studio overview, featured artists, gallery, about, and booking.
+- [Home](/): Studio overview, artists, about, and booking.
+- [Artists — FattMatt](/artists/matt): Full portfolio and booking for Matt.
+- [Artists — Brady Martinson](/artists/brady): Full portfolio and booking for Brady.
 - [Merch](/merch): Signed prints and limited drops shipped from the studio.

@@ -1,10 +1,31 @@
 User-agent: *
 Allow: /
-
 Disallow: /admin
 Disallow: /login
 Disallow: /checkout
 Disallow: /book/checkout
 Disallow: /book/return
+
+# AI crawlers — explicitly welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
 
 Sitemap: https://revivaltattoocollective.com/sitemap.xml
