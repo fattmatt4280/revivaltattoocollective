@@ -13,17 +13,20 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MerchRouteImport } from './routes/merch'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as BookReturnRouteImport } from './routes/book.return'
 import { Route as BookCheckoutRouteImport } from './routes/book.checkout'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ArtistsSlugRouteImport } from './routes/artists.$slug'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
+import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminArtistsRouteImport } from './routes/admin.artists'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
@@ -45,6 +48,11 @@ const LoginRoute = LoginRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -77,6 +85,11 @@ const BookCheckoutRoute = BookCheckoutRouteImport.update({
   path: '/book/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 const ArtistsSlugRoute = ArtistsSlugRouteImport.update({
   id: '/artists/$slug',
   path: '/artists/$slug',
@@ -102,6 +115,11 @@ const AdminBookingsRoute = AdminBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBlogRoute = AdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminArtistsRoute = AdminArtistsRouteImport.update({
   id: '/artists',
   path: '/artists',
@@ -117,16 +135,19 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/artists/$slug': typeof ArtistsSlugRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -135,16 +156,19 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/artists/$slug': typeof ArtistsSlugRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -155,16 +179,19 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/checkout': typeof CheckoutRouteWithChildren
   '/login': typeof LoginRoute
   '/merch': typeof MerchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/artists': typeof AdminArtistsRoute
+  '/admin/blog': typeof AdminBlogRoute
   '/admin/bookings': typeof AdminBookingsRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/artists/$slug': typeof ArtistsSlugRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/book/checkout': typeof BookCheckoutRoute
   '/book/return': typeof BookReturnRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -176,16 +203,19 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/blog'
     | '/checkout'
     | '/login'
     | '/merch'
     | '/sitemap.xml'
     | '/admin/artists'
+    | '/admin/blog'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
     | '/artists/$slug'
+    | '/blog/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
@@ -194,16 +224,19 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blog'
     | '/checkout'
     | '/login'
     | '/merch'
     | '/sitemap.xml'
     | '/admin/artists'
+    | '/admin/blog'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
     | '/artists/$slug'
+    | '/blog/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
@@ -213,16 +246,19 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/blog'
     | '/checkout'
     | '/login'
     | '/merch'
     | '/sitemap.xml'
     | '/admin/artists'
+    | '/admin/blog'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/settings'
     | '/artists/$slug'
+    | '/blog/$slug'
     | '/book/checkout'
     | '/book/return'
     | '/checkout/return'
@@ -233,6 +269,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BlogRoute: typeof BlogRouteWithChildren
   CheckoutRoute: typeof CheckoutRouteWithChildren
   LoginRoute: typeof LoginRoute
   MerchRoute: typeof MerchRoute
@@ -271,6 +308,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -315,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookCheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
     '/artists/$slug': {
       id: '/artists/$slug'
       path: '/artists/$slug'
@@ -350,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBookingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/blog': {
+      id: '/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/artists': {
       id: '/admin/artists'
       path: '/artists'
@@ -369,6 +427,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminArtistsRoute: typeof AdminArtistsRoute
+  AdminBlogRoute: typeof AdminBlogRoute
   AdminBookingsRoute: typeof AdminBookingsRoute
   AdminGalleryRoute: typeof AdminGalleryRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -378,6 +437,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminArtistsRoute: AdminArtistsRoute,
+  AdminBlogRoute: AdminBlogRoute,
   AdminBookingsRoute: AdminBookingsRoute,
   AdminGalleryRoute: AdminGalleryRoute,
   AdminOrdersRoute: AdminOrdersRoute,
@@ -386,6 +446,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface CheckoutRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -402,6 +472,7 @@ const CheckoutRouteWithChildren = CheckoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  BlogRoute: BlogRouteWithChildren,
   CheckoutRoute: CheckoutRouteWithChildren,
   LoginRoute: LoginRoute,
   MerchRoute: MerchRoute,
@@ -414,3 +485,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
