@@ -25,7 +25,6 @@ export function Footer() {
           <div className="md:col-span-2">
             <p className="text-[10px] tracking-editorial uppercase text-primary mb-4">Follow</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="https://instagram.com/shyftd.ink" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@shyftd.ink</a></li>
 <li><a href="https://instagram.com/revivalletters" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">@revivalletters</a></li>
               <li><a href="https://facebook.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">Facebook</a></li>
               <li><a href="https://tiktok.com/" target="_blank" rel="noreferrer" className="hover:text-bone transition-colors">TikTok</a></li>
